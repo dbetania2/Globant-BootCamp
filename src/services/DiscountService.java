@@ -1,7 +1,7 @@
 package services;
 
 import interfaces.DiscountStrategy;
-import models.products.Discount;
+import models.Discount;
 import models.products.Product;
 
 import java.time.LocalDate;
