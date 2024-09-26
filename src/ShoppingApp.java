@@ -1,5 +1,5 @@
 import models.Customer;
-import models.Product;
+import factories.ProductFactory;
 import models.ShoppingCart;
 import services.ShoppingCartServices;
 
@@ -7,28 +7,34 @@ import java.time.LocalDate;
 
 public class ShoppingApp {
     public static void main(String[] args) {
-        // Create customer
-        Customer customer = new Customer("John", "Smith", LocalDate.of(1990, 1, 1), "john@gmail.com", "123456789", "DNI123");
+        // Create customer using the Builder
+        Customer customer = new Customer.CustomerBuilder("John", "Smith")
+                .setBirthDate(LocalDate.of(1990, 1, 1))
+                .setEmail("john@gmail.com")
+                .setPhone("123456789")
+                .setIdentificationNumber("DNI123")
+                .build();
 
         // Create cart
         ShoppingCart cart = new ShoppingCart(customer);
 
-        // Add products to the cart
+    // Add products to the cart
 
-        // ELECTRONIC Products
-        cart.getProducts().add(new Product(200.00, "CPU I5", "High performance CPU", Product.Type.ELECTRONIC));
-        cart.getProducts().add(new Product(500.40, "CPU I7", "Top tier CPU", Product.Type.ELECTRONIC));
-        cart.getProducts().add(new Product(150.00, "GPU RTX 3060", "Gaming Graphics Card", Product.Type.ELECTRONIC));
+    // ELECTRONIC Products
+        cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "CPU I5", 200.00));
+        cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "CPU I7", 500.40));
+        cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "GPU RTX 3060", 150.00));
 
-        // LIBRARY Products
-        cart.getProducts().add(new Product(15.40, "Harry Potter", "A great book", Product.Type.LIBRARY));
-        cart.getProducts().add(new Product(20.30, "1984", "A dystopian novel", Product.Type.LIBRARY));
-        cart.getProducts().add(new Product(120.00, "Java 8", "Programming book", Product.Type.LIBRARY));
+    // LIBRARY Products
+        cart.getProducts().add(ProductFactory.createProduct("BOOK", "Harry Potter", 15.40));
+        cart.getProducts().add(ProductFactory.createProduct("BOOK", "1984", 20.30));
+        cart.getProducts().add(ProductFactory.createProduct("BOOK", "Java 8", 120.00));
 
-        // OTHER Products
-        cart.getProducts().add(new Product(12.40, "T-shirt", "A cool t-shirt", Product.Type.OTHER));
-        cart.getProducts().add(new Product(5.99, "Mug", "Coffee mug", Product.Type.OTHER));
-        cart.getProducts().add(new Product(30.00, "Backpack", "Travel backpack", Product.Type.OTHER));
+    // OTHER Products
+        cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "T-shirt", 12.40));
+        cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "Mug", 5.99));
+        cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "Backpack", 30.00));
+
 
         // Instantiate ShoppingCartServices
         ShoppingCartServices shoppingCartService = new ShoppingCartServices();

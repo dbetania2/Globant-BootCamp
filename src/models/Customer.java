@@ -11,16 +11,16 @@ public class Customer {
     private String email;
     private String phone;
     private String identificationNumber;
-    private ShoppingCart shoppingCart;
 
-    public Customer(String name, String lastName, LocalDate birthDate, String email, String phone, String identificationNumber) {
+    // Constructor privado
+    private Customer(CustomerBuilder builder) {
         this.id = generateCustomerId();  // Generates a unique ID for the customer
-        this.name = name;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.email = email;
-        this.phone = phone;
-        this.identificationNumber = identificationNumber;
+        this.name = builder.name;
+        this.lastName = builder.lastName;
+        this.birthDate = builder.birthDate;
+        this.email = builder.email;
+        this.phone = builder.phone;
+        this.identificationNumber = builder.identificationNumber;
     }
 
     // Method to generate a unique ID
@@ -28,66 +28,79 @@ public class Customer {
         return customerIdCounter++;  // Returns the current value and then increments
     }
 
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
-    }
-
-    public void setShoppingCart(ShoppingCart shoppingCart) {
-        this.shoppingCart = shoppingCart;
+    // Getters
+    public long getId() {
+        return id;
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return name;  // Getter for name
     }
 
     public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+        return lastName;  // Getter for last name
     }
 
     public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public String getIdentificationNumber() {
         return identificationNumber;
     }
 
-    public void setIdentificationNumber(String identificationNumber) {
-        this.identificationNumber = identificationNumber;
+    // Builder class
+    public static class CustomerBuilder {
+        private String name;
+        private String lastName;
+        private LocalDate birthDate;
+        private String email;
+        private String phone;
+        private String identificationNumber;
+
+        // Constructor obligatorio para el nombre y apellido
+        public CustomerBuilder(String name, String lastName) {
+            this.name = name;
+            this.lastName = lastName;
+        }
+
+        public CustomerBuilder setBirthDate(LocalDate birthDate) {
+            this.birthDate = birthDate;
+            return this;
+        }
+
+        public CustomerBuilder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public CustomerBuilder setPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public CustomerBuilder setIdentificationNumber(String identificationNumber) {
+            this.identificationNumber = identificationNumber;
+            return this;
+        }
+
+        public Customer build() {
+            return new Customer(this);
+        }
     }
 
     @Override
     public String toString() {
-        return String.format("Customer ID: %d, Name: %s %s, Identification: %s",
-                id, name, lastName, identificationNumber);
+        return String.format("Name: %s %s, Identification: %s",
+                 name, lastName, identificationNumber);
     }
 }
 

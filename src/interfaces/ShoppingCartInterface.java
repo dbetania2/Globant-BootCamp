@@ -1,4 +1,7 @@
-package models;
+package interfaces;
+
+import models.products.Product;
+import models.ShoppingCart;
 
 public interface ShoppingCartInterface {
 

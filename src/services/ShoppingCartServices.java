@@ -1,8 +1,8 @@
 package services;
 
-import models.Product;
+import models.products.Product;
 import models.ShoppingCart;
-import models.ShoppingCartInterface;
+import interfaces.ShoppingCartInterface;
 
 import java.util.Comparator;
 
@@ -13,7 +13,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     public void printLibraryProductsWithPriceOver100(ShoppingCart cart) {
         System.out.println("Products in the LIBRARY category with price > 100:");
         cart.getProducts().stream()
-                .filter(product -> product.getPrice() > 100 && product.getType() == Product.Type.LIBRARY)
+                .filter(product -> product.getPrice() > 100 && product.getType().equals("LIBRARY"))
                 .forEach(System.out::println);
     }
 
@@ -27,7 +27,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     // Calculate and display the total sum of the prices of products from the ELECTRONICS category
     public double calculateTotalPriceForElectronicProducts(ShoppingCart cart) {
         return cart.getProducts().stream()
-                .filter(product -> product.getType() == Product.Type.ELECTRONIC)
+                .filter(product -> product.getType().equals("ELECTRONIC"))
                 .mapToDouble(Product::getPrice)
                 .sum();
     }
