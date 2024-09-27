@@ -1,0 +1,15 @@
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\factories\OrderFactory.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\factories\ProductFactory.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\interfaces\DiscountStrategy.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\interfaces\ShoppingCartInterface.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\models\Customer.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\models\Discount.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\models\products\Book.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\models\products\Clothing.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\models\products\Electronic.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\models\products\Product.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\models\ShoppingCart.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\services\DiscountService.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\services\facades\ShoppingFacade.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\services\ShoppingCartServices.java
+C:\Users\Usuario\Documents\Gpractice\Shopping\ShopiShopping\src\main\java\com\shopi\shopping\ShoppingApp.java
