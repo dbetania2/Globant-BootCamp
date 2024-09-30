@@ -7,6 +7,7 @@ import main.java.com.shopi.shopping.models.products.Product;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ShoppingCart {
 
     private static long cartIdCounter = 120300;  // Starts at 120300 as an example

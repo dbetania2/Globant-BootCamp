@@ -1,8 +1,9 @@
 package main.java.com.shopi.shopping.services;
 
+import main.java.com.shopi.shopping.interfaces.ShoppingCartInterface;
 import main.java.com.shopi.shopping.models.products.Product;
 import main.java.com.shopi.shopping.models.ShoppingCart;
-import main.java.com.shopi.shopping.interfaces.ShoppingCartInterface;
+
 
 import java.util.Comparator;
 
