@@ -1,6 +1,7 @@
 package services;
 
 import interfaces.DiscountStrategy;
+import models.Order;
 import models.products.Discount;
 import models.products.Product;
 
@@ -19,5 +20,17 @@ public class DiscountService implements DiscountStrategy {
         // Calculate the discounted price
         double discountedPrice = product.getPrice() * (1 - discount.getRate());
         return discountedPrice; // Return the calculated discounted price
+    }
+
+
+    // Apply discount for first purchase
+    private static final double FIRST_PURCHASE_DISCOUNT = 0.10;
+    public double applyFirstPurchaseDiscount(Order order, boolean isFirstPurchase) {
+        if (isFirstPurchase) {
+            double discountedAmount = order.getTotalAmount() * (1 - FIRST_PURCHASE_DISCOUNT);
+            order.setTotalAmount(discountedAmount); // Update total after discount
+            System.out.println("First purchase discount applied");
+        }
+        return order.getTotalAmount();
     }
 }

@@ -1,6 +1,8 @@
+import factories.OrderFactory;
 import models.Customer;
 import factories.ProductFactory;
 import models.ShoppingCart;
+import services.DiscountService;
 import services.ShoppingCartServices;
 
 import java.time.LocalDate;
@@ -37,7 +39,9 @@ public class ShoppingApp {
 
 
         // Instantiate ShoppingCartServices
-        ShoppingCartServices shoppingCartService = new ShoppingCartServices();
+        OrderFactory orderFactory = new OrderFactory();
+        DiscountService discountService = new DiscountService();
+        ShoppingCartServices shoppingCartService = new ShoppingCartServices(orderFactory, discountService);
 
         // Call methods
         shoppingCartService.printLibraryProductsWithPriceOver100(cart);

@@ -20,7 +20,7 @@ public class ShoppingFacade {
 
     // Adds a product to the cart by delegating to the service
     public void addProductToCart(Product product) {
-        shoppingCartService.addProduct(shoppingCart, product);
+        shoppingCartService.addProductToCart(shoppingCart, product);
     }
 
     // Handles the checkout process for completing the purchase
