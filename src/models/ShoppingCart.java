@@ -1,5 +1,6 @@
 package models;
 
+import models.customer.Customer;
 import models.products.Product;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class ShoppingCart {
 
-    private static long cartIdCounter = 120300;  // Starts at 120300 as an example
+    private static long cartIdCounter = 1;  // Static counter for unique cart IDs
     private long id;
     private Customer customer;
     private List<Product> products;
@@ -19,7 +20,7 @@ public class ShoppingCart {
 
     // Constructor
     public ShoppingCart(Customer customer) {
-        this.id = generateCartId();  // Generates a unique ID for the cart
+        this.id = cartIdCounter++;  // Generates a unique ID for the cart
         this.products = new ArrayList<>();  // Initialize empty product list
         this.status = Status.DRAFT;  // Default status is DRAFT
         this.customer = customer;  // Assign customer to the cart

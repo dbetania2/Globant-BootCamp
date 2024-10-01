@@ -1,6 +1,6 @@
 package services.facades;
 
-import models.Customer;
+import models.customer.Customer;
 import models.products.Product;
 import models.ShoppingCart;
 import services.ShoppingCartServices;

@@ -1,9 +1,10 @@
 import factories.OrderFactory;
-import models.Customer;
+import models.customer.Customer;
 import factories.ProductFactory;
 import models.ShoppingCart;
 import services.DiscountService;
 import services.ShoppingCartServices;
+
 
 import java.time.LocalDate;
 
@@ -16,7 +17,6 @@ public class ShoppingApp {
                 .setPhone("123456789")
                 .setIdentificationNumber("DNI123")
                 .build();
-
         // Create cart
         ShoppingCart cart = new ShoppingCart(customer);
 
