@@ -1,9 +1,9 @@
-package main.java.com.shopi.shopping.services.facades;
+package com.shopi.shopping.services.facades;
 
-import main.java.com.shopi.shopping.models.Customer;
-import main.java.com.shopi.shopping.models.ShoppingCart;
-import main.java.com.shopi.shopping.models.products.Product;
-import main.java.com.shopi.shopping.services.ShoppingCartServices;
+import com.shopi.shopping.models.Customer;
+import com.shopi.shopping.models.ShoppingCart;
+import com.shopi.shopping.models.products.Product;
+import com.shopi.shopping.services.ShoppingCartServices;
 
 public class ShoppingFacade {
     private Customer customer;  // Customer associated with the shopping session
@@ -20,7 +20,7 @@ public class ShoppingFacade {
 
     // Adds a product to the cart by delegating to the service
     public void addProductToCart(Product product) {
-        shoppingCartService.addProduct(shoppingCart, product);
+        shoppingCartService.addProductToCart(shoppingCart, product);
     }
 
     // Handles the checkout process for completing the purchase

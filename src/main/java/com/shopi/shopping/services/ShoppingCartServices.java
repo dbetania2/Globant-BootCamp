@@ -1,14 +1,39 @@
-package main.java.com.shopi.shopping.services;
+package com.shopi.shopping.services;
 
-import main.java.com.shopi.shopping.interfaces.ShoppingCartInterface;
-import main.java.com.shopi.shopping.models.products.Product;
-import main.java.com.shopi.shopping.models.ShoppingCart;
-
+import com.shopi.shopping.factories.OrderFactory;
+import com.shopi.shopping.models.Order;
+import com.shopi.shopping.interfaces.ShoppingCartInterface;
+import com.shopi.shopping.models.products.Product;
+import com.shopi.shopping.models.ShoppingCart;
+import  com.shopi.shopping.services.DiscountService;
 
 import java.util.Comparator;
 
 
 public class ShoppingCartServices implements ShoppingCartInterface {
+
+    private OrderFactory orderFactory;
+    private DiscountService discountService;
+
+    // Constructor with dependency injection
+    public ShoppingCartServices(OrderFactory orderFactory, DiscountService discountService) {
+        this.orderFactory = orderFactory;
+        this.discountService = discountService;
+    }
+
+
+    // Checkout process to create an order and apply discounts if necessary
+    public Order checkout(ShoppingCart cart, boolean isFirstPurchase) {
+        // Create a new order using the factory
+        Order order = orderFactory.createOrder(cart.getProducts());
+
+        // Apply discounts if applicable
+        discountService.applyFirstPurchaseDiscount(order, isFirstPurchase);
+
+        // Return the final order with the calculated total
+        return order;
+    }
+
 
     // Filter and display products with price > 100 from the LIBRARY category
     public void printLibraryProductsWithPriceOver100(ShoppingCart cart) {
@@ -74,7 +99,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     }
 
     @Override
-    public void addProduct(ShoppingCart cart, Product product) {
+    public void addProductToCart(ShoppingCart cart, Product product) {
         // Add product to the cart
     }
 
@@ -82,4 +107,6 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     public void buyProducts(ShoppingCart cart) {
         // Proceed with buying the products in the cart
     }
+
+
 }

@@ -1,8 +1,10 @@
-package main.java.com.shopi.shopping;
-import main.java.com.shopi.shopping.models.Customer;
-import main.java.com.shopi.shopping.factories.ProductFactory;
-import main.java.com.shopi.shopping.models.ShoppingCart;
-import main.java.com.shopi.shopping.services.ShoppingCartServices;
+package com.shopi.shopping;
+import com.shopi.shopping.factories.OrderFactory;
+import com.shopi.shopping.models.Customer;
+import com.shopi.shopping.factories.ProductFactory;
+import com.shopi.shopping.models.ShoppingCart;
+import com.shopi.shopping.services.DiscountService;
+import com.shopi.shopping.services.ShoppingCartServices;
 
 import java.time.LocalDate;
 
@@ -15,30 +17,31 @@ public class ShoppingApp {
                 .setPhone("123456789")
                 .setIdentificationNumber("DNI123")
                 .build();
-
         // Create cart
         ShoppingCart cart = new ShoppingCart(customer);
 
-    // Add products to the cart
+        // Add products to the cart
 
-    // ELECTRONIC Products
+        // ELECTRONIC Products
         cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "CPU I5", 200.00));
         cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "CPU I7", 500.40));
         cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "GPU RTX 3060", 150.00));
 
-    // LIBRARY Products
+        // LIBRARY Products
         cart.getProducts().add(ProductFactory.createProduct("BOOK", "Harry Potter", 15.40));
         cart.getProducts().add(ProductFactory.createProduct("BOOK", "1984", 20.30));
         cart.getProducts().add(ProductFactory.createProduct("BOOK", "Java 8", 120.00));
 
-    // OTHER Products
+        // OTHER Products
         cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "T-shirt", 12.40));
         cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "Mug", 5.99));
         cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "Backpack", 30.00));
 
 
         // Instantiate ShoppingCartServices
-        ShoppingCartServices shoppingCartService = new ShoppingCartServices();
+        OrderFactory orderFactory = new OrderFactory();
+        DiscountService discountService = new DiscountService();
+        ShoppingCartServices shoppingCartService = new ShoppingCartServices(orderFactory, discountService);
 
         // Call methods
         shoppingCartService.printLibraryProductsWithPriceOver100(cart);

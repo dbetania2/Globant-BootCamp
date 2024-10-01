@@ -1,8 +1,9 @@
-package main.java.com.shopi.shopping.services;
+package com.shopi.shopping.services;
 
-import main.java.com.shopi.shopping.interfaces.DiscountStrategy;
-import main.java.com.shopi.shopping.models.Discount;
-import main.java.com.shopi.shopping.models.products.Product;
+import com.shopi.shopping.interfaces.DiscountStrategy;
+import com.shopi.shopping.models.Discount;
+import com.shopi.shopping.models.Order;
+import com.shopi.shopping.models.products.Product;
 
 import java.time.LocalDate;
 
@@ -19,5 +20,17 @@ public class DiscountService implements DiscountStrategy {
         // Calculate the discounted price
         double discountedPrice = product.getPrice() * (1 - discount.getRate());
         return discountedPrice; // Return the calculated discounted price
+    }
+
+
+    // Apply discount for first purchase
+    private static final double FIRST_PURCHASE_DISCOUNT = 0.10;
+    public double applyFirstPurchaseDiscount(Order order, boolean isFirstPurchase) {
+        if (isFirstPurchase) {
+            double discountedAmount = order.getTotalAmount() * (1 - FIRST_PURCHASE_DISCOUNT);
+            order.setTotalAmount(discountedAmount); // Update total after discount
+            System.out.println("First purchase discount applied");
+        }
+        return order.getTotalAmount();
     }
 }

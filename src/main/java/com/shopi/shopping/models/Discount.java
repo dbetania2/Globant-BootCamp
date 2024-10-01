@@ -1,4 +1,4 @@
-package main.java.com.shopi.shopping.models;
+package com.shopi.shopping.models;
 import java.time.LocalDate;
 
 public class Discount {

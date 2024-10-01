@@ -1,4 +1,4 @@
-package main.java.com.shopi.shopping.models.products;
+package com.shopi.shopping.models.products;
 
 
 public class Electronic extends Product {

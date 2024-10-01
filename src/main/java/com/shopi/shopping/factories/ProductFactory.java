@@ -1,5 +1,5 @@
-package main.java.com.shopi.shopping.factories;
-import  main.java.com.shopi.shopping.models.products.*;  // Import all product classes
+package com.shopi.shopping.factories;
+import  com.shopi.shopping.models.products.*;  // Import all product classes
 
 
 // Factory class for creating different types of products

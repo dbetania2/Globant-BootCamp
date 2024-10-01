@@ -1,9 +1,9 @@
-package main.java.com.shopi.shopping.models;
+package com.shopi.shopping.models;
 
 import java.time.LocalDate;
 
 public class Customer {
-    private static long customerIdCounter = 100;  // Starts at 100 as an example
+    private static long customerIdCounter = 1; // Example static counter for unique customer IDs
     private long id;
     private String name;
     private String lastName;
@@ -12,9 +12,9 @@ public class Customer {
     private String phone;
     private String identificationNumber;
 
-    // Constructor privado
+    // Private constructor to enforce object creation through the Builder pattern
     private Customer(CustomerBuilder builder) {
-        this.id = generateCustomerId();  // Generates a unique ID for the customer
+        this.id = customerIdCounter++;          // Assign a unique ID
         this.name = builder.name;
         this.lastName = builder.lastName;
         this.birthDate = builder.birthDate;
@@ -23,22 +23,17 @@ public class Customer {
         this.identificationNumber = builder.identificationNumber;
     }
 
-    // Method to generate a unique ID
-    private synchronized long generateCustomerId() {
-        return customerIdCounter++;  // Returns the current value and then increments
-    }
-
     // Getters
     public long getId() {
         return id;
     }
 
     public String getName() {
-        return name;  // Getter for name
+        return name;
     }
 
     public String getLastName() {
-        return lastName;  // Getter for last name
+        return lastName;
     }
 
     public LocalDate getBirthDate() {
@@ -57,7 +52,7 @@ public class Customer {
         return identificationNumber;
     }
 
-    // Builder class
+    // Static Builder class
     public static class CustomerBuilder {
         private String name;
         private String lastName;
@@ -66,7 +61,7 @@ public class Customer {
         private String phone;
         private String identificationNumber;
 
-        // Constructor obligatorio para el nombre y apellido
+        // Mandatory constructor for name and last name
         public CustomerBuilder(String name, String lastName) {
             this.name = name;
             this.lastName = lastName;
@@ -93,14 +88,20 @@ public class Customer {
         }
 
         public Customer build() {
-            return new Customer(this);
+            // Validations
+            if (name == null || name.isEmpty()) {
+                throw new IllegalArgumentException("Name is required.");
+            }
+            if (email == null || email.isEmpty()) {
+                throw new IllegalArgumentException("Email is required.");
+            }
+            return new Customer(this); // Create a new instance of Customer
         }
     }
 
     @Override
     public String toString() {
-        return String.format("Name: %s %s, Identification: %s",
-                 name, lastName, identificationNumber);
+        return String.format("Customer ID: %d, Name: %s %s, Birth Date: %s, Email: %s, Phone: %s, Identification: %s",
+                id, name, lastName, birthDate, email, phone, identificationNumber);
     }
 }
-
