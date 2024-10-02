@@ -35,9 +35,7 @@ public abstract class Product {
         return String.format("%-10s | %-15s | %-20s | %.2f",
                 id, name, description, price);
     }
-<<<<<<< HEAD:src/models/products/Product.java
+
 }
 
-=======
-}
->>>>>>> topic2formerge:src/main/java/com/shopi/shopping/models/products/Product.java
+

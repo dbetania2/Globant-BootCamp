@@ -1,12 +1,5 @@
-<<<<<<< HEAD:src/models/Order.java
-package models;
-
-import models.products.Product;
-=======
 package com.shopi.shopping.models;
-
 import com.shopi.shopping.models.products.Product;
->>>>>>> topic2formerge:src/main/java/com/shopi/shopping/models/Order.java
 
 import java.util.List;
 
@@ -39,10 +32,6 @@ public abstract class Order {
 
     // Abstract method to calculate totals
     public abstract void calculateTotal();
-<<<<<<< HEAD:src/models/Order.java
+
 }
 
-
-=======
-}
->>>>>>> topic2formerge:src/main/java/com/shopi/shopping/models/Order.java

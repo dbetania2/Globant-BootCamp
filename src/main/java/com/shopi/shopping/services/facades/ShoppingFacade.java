@@ -1,16 +1,8 @@
 package com.shopi.shopping.services.facades;
-
-<<<<<<< HEAD:src/services/facades/ShoppingFacade.java
-import models.customer.Customer;
-import models.products.Product;
-import models.ShoppingCart;
-import services.ShoppingCartServices;
-=======
 import com.shopi.shopping.models.Customer;
 import com.shopi.shopping.models.ShoppingCart;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.services.ShoppingCartServices;
->>>>>>> topic2formerge:src/main/java/com/shopi/shopping/services/facades/ShoppingFacade.java
 
 public class ShoppingFacade {
     private Customer customer;  // Customer associated with the shopping session
