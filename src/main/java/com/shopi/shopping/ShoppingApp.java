@@ -20,28 +20,29 @@ public class ShoppingApp {
         // Create cart
         ShoppingCart cart = new ShoppingCart(customer);
 
-        // Add products to the cart
-
-        // ELECTRONIC Products
-        cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "CPU I5", 200.00));
-        cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "CPU I7", 500.40));
-        cart.getProducts().add(ProductFactory.createProduct("ELECTRONICS", "GPU RTX 3060", 150.00));
-
-        // LIBRARY Products
-        cart.getProducts().add(ProductFactory.createProduct("BOOK", "Harry Potter", 15.40));
-        cart.getProducts().add(ProductFactory.createProduct("BOOK", "1984", 20.30));
-        cart.getProducts().add(ProductFactory.createProduct("BOOK", "Java 8", 120.00));
-
-        // OTHER Products
-        cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "T-shirt", 12.40));
-        cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "Mug", 5.99));
-        cart.getProducts().add(ProductFactory.createProduct("CLOTHING", "Backpack", 30.00));
-
-
         // Instantiate ShoppingCartServices
         OrderFactory orderFactory = new OrderFactory();
         DiscountService discountService = new DiscountService();
         ShoppingCartServices shoppingCartService = new ShoppingCartServices(orderFactory, discountService);
+
+
+        // Add products to the cart using the addProductToCart method
+        // ELECTRONIC Products
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("ELECTRONICS", "CPU I5", 200.00));
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("ELECTRONICS", "CPU I7", 500.40));
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("ELECTRONICS", "GPU RTX 3060", 150.00));
+
+        // LIBRARY Products
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("BOOK", "Harry Potter", 15.40));
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("BOOK", "1984", 20.30));
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("BOOK", "Java 8", 120.00));
+
+        // OTHER Products
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("CLOTHING", "T-shirt", 12.40));
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("CLOTHING", "Mug", 5.99));
+        shoppingCartService.addProductToCart(cart, ProductFactory.createProduct("CLOTHING", "Backpack", 30.00));
+
+
 
         // Call methods
         shoppingCartService.printLibraryProductsWithPriceOver100(cart);
