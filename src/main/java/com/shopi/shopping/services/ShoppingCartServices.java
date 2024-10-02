@@ -1,10 +1,19 @@
-package services;
+package com.shopi.shopping.services;
 
+<<<<<<< HEAD:src/services/ShoppingCartServices.java
 import factories.OrderFactory;
 import models.Order;
 import models.products.Product;
 import models.ShoppingCart;
 import interfaces.ShoppingCartInterface;
+=======
+import com.shopi.shopping.factories.OrderFactory;
+import com.shopi.shopping.models.Order;
+import com.shopi.shopping.interfaces.ShoppingCartInterface;
+import com.shopi.shopping.models.products.Product;
+import com.shopi.shopping.models.ShoppingCart;
+import  com.shopi.shopping.services.DiscountService;
+>>>>>>> topic2formerge:src/main/java/com/shopi/shopping/services/ShoppingCartServices.java
 
 import java.util.Comparator;
 
@@ -41,14 +50,6 @@ public class ShoppingCartServices implements ShoppingCartInterface {
                 .filter(product -> product.getPrice() > 100 && product.getType().equals("LIBRARY"))
                 .forEach(System.out::println);
     }
-
-    // Calculate and display the total sum of the prices of all products
-    public double calculateTotalPrice(ShoppingCart cart) {
-        return cart.getProducts().stream()
-                .mapToDouble(Product::getPrice)
-                .sum();
-    }
-
     // Calculate and display the total sum of the prices of products from the ELECTRONICS category
     public double calculateTotalPriceForElectronicProducts(ShoppingCart cart) {
         return cart.getProducts().stream()
@@ -56,6 +57,14 @@ public class ShoppingCartServices implements ShoppingCartInterface {
                 .mapToDouble(Product::getPrice)
                 .sum();
     }
+    // Calculate and display the total sum of the prices of all products
+    public double calculateTotalPrice(ShoppingCart cart) {
+        return cart.getProducts().stream()
+                .mapToDouble(Product::getPrice)
+                .sum();
+    }
+
+
 
     // Print all shopping cart information sorted by price
     public void printCartInfoSortedByPrice(ShoppingCart cart) {
@@ -99,7 +108,17 @@ public class ShoppingCartServices implements ShoppingCartInterface {
 
     @Override
     public void addProductToCart(ShoppingCart cart, Product product) {
+<<<<<<< HEAD:src/services/ShoppingCartServices.java
         // Add product to the cart
+=======
+        if (cart != null && product != null) {
+            // Add the product to the cart's product list
+            cart.getProducts().add(product);
+            System.out.println("Product added to the cart: " + product.getName());
+        } else {
+            System.out.println("Cart or product is null.");
+        }
+>>>>>>> topic2formerge:src/main/java/com/shopi/shopping/services/ShoppingCartServices.java
     }
 
     @Override

@@ -1,5 +1,4 @@
-package models.products;
-
+package com.shopi.shopping.models;
 import java.time.LocalDate;
 
 public class Discount {
@@ -36,4 +35,3 @@ public class Discount {
         return endDate;
     }
 }
-

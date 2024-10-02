@@ -1,4 +1,4 @@
-package models.products;
+package com.shopi.shopping.models.products;
 
 public class Clothing extends Product {
     public Clothing(double price, String name, String description) {

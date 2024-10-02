@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/shopi/shopping/models/customer/Customer.java
 package models.customer;
+========
+package com.shopi.shopping.models;
+>>>>>>>> topic2formerge:src/main/java/com/shopi/shopping/models/Customer.java
 
 import java.time.LocalDate;
 public class Customer {
@@ -104,5 +108,8 @@ public class Customer {
                 id, name, lastName, birthDate, email, phone, identificationNumber);
     }
 }
+<<<<<<<< HEAD:src/main/java/com/shopi/shopping/models/customer/Customer.java
 
 
+========
+>>>>>>>> topic2formerge:src/main/java/com/shopi/shopping/models/Customer.java

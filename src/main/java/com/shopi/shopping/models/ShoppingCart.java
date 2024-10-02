@@ -1,10 +1,18 @@
-package models;
+package com.shopi.shopping.models;
 
+import com.shopi.shopping.models.Customer;
+import com.shopi.shopping.models.products.Product;
+
+
+<<<<<<< HEAD:src/models/ShoppingCart.java
 import models.customer.Customer;
 import models.products.Product;
+=======
+>>>>>>> topic2formerge:src/main/java/com/shopi/shopping/models/ShoppingCart.java
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class ShoppingCart {
 
@@ -74,4 +82,3 @@ public class ShoppingCart {
         return printCart.toString();
     }
 }
-

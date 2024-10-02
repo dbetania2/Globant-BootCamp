@@ -1,4 +1,4 @@
-package models.products;
+package com.shopi.shopping.models.products;
 
 public abstract class Product {
     private static long productIdCounter = 1;  // Example static counter for unique product IDs
@@ -35,5 +35,9 @@ public abstract class Product {
         return String.format("%-10s | %-15s | %-20s | %.2f",
                 id, name, description, price);
     }
+<<<<<<< HEAD:src/models/products/Product.java
 }
 
+=======
+}
+>>>>>>> topic2formerge:src/main/java/com/shopi/shopping/models/products/Product.java

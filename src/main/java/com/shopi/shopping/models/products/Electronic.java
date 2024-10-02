@@ -1,4 +1,5 @@
-package models.products;
+package com.shopi.shopping.models.products;
+
 
 public class Electronic extends Product {
 

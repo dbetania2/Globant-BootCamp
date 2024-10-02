@@ -1,9 +1,9 @@
-package services;
+package com.shopi.shopping.services;
 
-import interfaces.DiscountStrategy;
-import models.Order;
-import models.products.Discount;
-import models.products.Product;
+import com.shopi.shopping.interfaces.DiscountStrategy;
+import com.shopi.shopping.models.Discount;
+import com.shopi.shopping.models.Order;
+import com.shopi.shopping.models.products.Product;
 
 import java.time.LocalDate;
 

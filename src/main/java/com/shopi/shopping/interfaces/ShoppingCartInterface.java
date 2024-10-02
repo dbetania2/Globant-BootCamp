@@ -1,7 +1,8 @@
-package interfaces;
+package com.shopi.shopping.interfaces;
 
-import models.products.Product;
-import models.ShoppingCart;
+import com.shopi.shopping.models.ShoppingCart;
+import com.shopi.shopping.models.products.Product;
+
 
 public interface ShoppingCartInterface {
 
@@ -13,4 +14,3 @@ public interface ShoppingCartInterface {
 
     void buyProducts(ShoppingCart cart);
 }
-

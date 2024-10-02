@@ -1,8 +1,8 @@
-package factories;
+package com.shopi.shopping.factories;
 
-import models.Order;
-import models.StandardOrder;
-import models.products.Product;
+import com.shopi.shopping.models.Order;
+import com.shopi.shopping.models.StandardOrder;
+import com.shopi.shopping.models.products.Product;
 
 import java.util.List;
 
