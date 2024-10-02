@@ -1,16 +1,20 @@
 package com.shopi.shopping.services;
-
 import com.shopi.shopping.factories.OrderFactory;
 import com.shopi.shopping.models.Order;
 import com.shopi.shopping.interfaces.ShoppingCartInterface;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.models.ShoppingCart;
-import  com.shopi.shopping.services.DiscountService;
+import com.shopi.shopping.services.DiscountService;
 import java.util.Comparator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 public class ShoppingCartServices implements ShoppingCartInterface {
 
+    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartServices.class);
     private OrderFactory orderFactory;
     private DiscountService discountService;
 
@@ -18,16 +22,23 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     public ShoppingCartServices(OrderFactory orderFactory, DiscountService discountService) {
         this.orderFactory = orderFactory;
         this.discountService = discountService;
+        logger.info("ShoppingCartServices initialized with OrderFactory and DiscountService."); //logger------------
     }
 
 
     // Checkout process to create an order and apply discounts if necessary
     public Order checkout(ShoppingCart cart, boolean isFirstPurchase) {
+
+        logger.info("Checkout process started for cart ID: {}", cart.getId());  //llogger------------
+
         // Create a new order using the factory
         Order order = orderFactory.createOrder(cart.getProducts());
 
+        logger.info("Order created with ID: {}", order.getId());    //logger------------
+
         // Apply discounts if applicable
         discountService.applyFirstPurchaseDiscount(order, isFirstPurchase);
+        logger.info("Discount applied for first purchase: {}", isFirstPurchase);
 
         // Return the final order with the calculated total
         return order;
@@ -50,9 +61,14 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     }
     // Calculate and display the total sum of the prices of all products
     public double calculateTotalPrice(ShoppingCart cart) {
-        return cart.getProducts().stream()
+        logger.info("Calculating total price for all products in cart ID: {}", cart.getId());    //logger------------
+
+        double total = cart.getProducts().stream()
                 .mapToDouble(Product::getPrice)
                 .sum();
+
+        logger.info("Total price for all products: {}", total);    //logger------------
+        return total;
     }
 
 
@@ -77,6 +93,9 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     // View products in the cart
     @Override
     public void viewCart(ShoppingCart cart) {
+
+        logger.info("Viewing products in cart ID: {}", cart.getId());    //logger------------
+
         System.out.println("Products in the cart:");
         cart.getProducts().forEach(product ->
                 System.out.printf("%-3s | %-20s | %.2f\n",
@@ -88,6 +107,9 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     // View details of the products in the cart (with description)
     @Override
     public void viewCartDetails(ShoppingCart cart) {
+
+        logger.info("Viewing details of products in cart ID: {}", cart.getId());    //logger------------
+
         System.out.println("Details of products in the cart:");
         cart.getProducts().forEach(product ->
                 System.out.printf("%-3s | %-20s | %.2f | %s\n",
@@ -97,22 +119,20 @@ public class ShoppingCartServices implements ShoppingCartInterface {
                         product.getDescription()));
     }
 
-    @Override
     public void addProductToCart(ShoppingCart cart, Product product) {
-
-        // Add product to the cart
         if (cart != null && product != null) {
-            // Add the product to the cart's product list
+            // Add product to the cart's product list
             cart.getProducts().add(product);
-            System.out.println("Product added to the cart: " + product.getName());
+            logger.info("Product added to the cart: {}", product.getName());    //logger------------
         } else {
-            System.out.println("Cart or product is null.");
+            logger.warn("Cart or product is null.");    //logger------------
         }
     }
 
     @Override
     public void buyProducts(ShoppingCart cart) {
         // Proceed with buying the products in the cart
+        logger.info("Buying products in cart ID: {}", cart.getId());    //logger------------
     }
 
 
