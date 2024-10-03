@@ -5,6 +5,7 @@ out/
 *.iml
 .idea/
 logs/
+*.log
 
 ### Eclipse ###
 .apt_generated
