@@ -14,7 +14,10 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.io.PrintStream;
 import java.time.LocalDate;
+import java.io.ByteArrayOutputStream;
+
 
 
 public class ShoppingCartServicesTest {
@@ -64,12 +67,11 @@ public class ShoppingCartServicesTest {
 
         // Verify that an order was created and the discount was applied
         verify(orderFactory).createOrder(cart.getProducts());
-        verify(discountService).applyFirstPurchaseDiscount(order, true); // true indicates its the first purchase
+        verify(discountService).applyFirstPurchaseDiscount(order, true); // true indicates it's the first purchase
 
         // Verify that the returned order is not null
         assertNotNull(resultOrder);
     }
-
 
     @Test
     public void testCalculateTotalPrice() {
@@ -96,9 +98,58 @@ public class ShoppingCartServicesTest {
         // Simulate the console output
         shoppingCartServices.viewCart(cart);
 
-        // Cannot verify console output at this level,check if the method executed without exceptions
+        // Cannot verify console output at this level, check if the method executed without exceptions
         assertDoesNotThrow(() -> shoppingCartServices.viewCart(cart));
     }
-}
 
+    @Test
+    public void testPrintCartInfoSortedByPrice() {
+        // Redirect standard output to capture printed output
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        PrintStream originalOut = System.out; // Store original System.out
+
+        System.setOut(printStream); // Redirect System.out
+
+        // Call the method to test
+        shoppingCartServices.printCartInfoSortedByPrice(cart);
+
+        // Reset System.out to original
+        System.setOut(originalOut);
+
+        // Get the output as a string
+        String output = outputStream.toString();
+
+        // Assert that the output contains the expected product names
+        assertTrue(output.contains("A novel"), "Output should include product name 'A novel'");
+        assertTrue(output.contains("Smartphone"), "Output should include product name 'Smartphone'");
+    }
+
+
+    @Test
+    public void testViewCartDetails() {
+        // Capture the output
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        PrintStream originalOut = System.out;
+        System.setOut(printStream);
+
+        // Execute the method
+        shoppingCartServices.viewCartDetails(cart);
+
+        // Restore the original output
+        System.setOut(originalOut);
+
+        // Check the output
+        String output = outputStream.toString();
+        assertTrue(output.contains("A novel"), "Output should include product description");
+        assertTrue(output.contains("Smartphone"), "Output should include product description");
+    }
+
+    @Test
+    public void testBuyProducts() {
+        // Execute the buyProducts method
+        assertDoesNotThrow(() -> shoppingCartServices.buyProducts(cart));
+    }
+}
 
