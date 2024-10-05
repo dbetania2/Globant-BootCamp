@@ -96,6 +96,12 @@
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>7.10.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -117,6 +123,14 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.12</version>
+        <configuration>
+          <excludes>
+            <exclude>com/shopi/shopping/interfaces/**</exclude>
+            <exclude>com/shopi/shopping/models/**</exclude>
+            <exclude>com/shopi/shopping/ShoppingApp/**</exclude>
+            <exclude>com/shopi/shopping/services/facades/**</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <goals>
