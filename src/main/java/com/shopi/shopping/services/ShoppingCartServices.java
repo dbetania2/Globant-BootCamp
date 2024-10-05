@@ -4,7 +4,6 @@ import com.shopi.shopping.models.Order;
 import com.shopi.shopping.interfaces.ShoppingCartInterface;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.models.ShoppingCart;
-import com.shopi.shopping.services.DiscountService;
 import java.util.Comparator;
 
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class ShoppingCartServices implements ShoppingCartInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartServices.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartServices.class);   //logger------------
     private OrderFactory orderFactory;
     private DiscountService discountService;
 
@@ -44,21 +43,6 @@ public class ShoppingCartServices implements ShoppingCartInterface {
         return order;
     }
 
-
-    // Filter and display products with price > 100 from the LIBRARY category
-    public void printLibraryProductsWithPriceOver100(ShoppingCart cart) {
-        System.out.println("Products in the LIBRARY category with price > 100:");
-        cart.getProducts().stream()
-                .filter(product -> product.getPrice() > 100 && product.getType().equals("LIBRARY"))
-                .forEach(System.out::println);
-    }
-    // Calculate and display the total sum of the prices of products from the ELECTRONICS category
-    public double calculateTotalPriceForElectronicProducts(ShoppingCart cart) {
-        return cart.getProducts().stream()
-                .filter(product -> product.getType().equals("ELECTRONIC"))
-                .mapToDouble(Product::getPrice)
-                .sum();
-    }
     // Calculate and display the total sum of the prices of all products
     public double calculateTotalPrice(ShoppingCart cart) {
         logger.info("Calculating total price for all products in cart ID: {}", cart.getId());    //logger------------
