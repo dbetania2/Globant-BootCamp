@@ -1,8 +1,20 @@
 package com.shopi.shopping.models;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+
 import java.time.LocalDate;
+
+@Entity
+@Table(name = "customers")  // Maps the class to the "customers" table in the database
 public class Customer {
-    private static long customerIdCounter = 1; // Example static counter for unique customer IDs
-    private long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // The database will automatically generate the ID
+    private Long id;
+
     private String name;
     private String lastName;
     private LocalDate birthDate;
@@ -10,9 +22,12 @@ public class Customer {
     private String phone;
     private String identificationNumber;
 
-    // Private constructor to enforce object creation through the Builder pattern
+    // Default constructor required by JPA
+    public Customer() {
+    }
+
+    // Private constructor for the Builder pattern
     private Customer(CustomerBuilder builder) {
-        this.id = customerIdCounter++;          // Assign a unique ID
         this.name = builder.name;
         this.lastName = builder.lastName;
         this.birthDate = builder.birthDate;
@@ -22,7 +37,7 @@ public class Customer {
     }
 
     // Getters
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -93,7 +108,7 @@ public class Customer {
             if (email == null || email.isEmpty()) {
                 throw new IllegalArgumentException("Email is required.");
             }
-            return new Customer(this); // Create a new instance of Customer
+            return new Customer(this);
         }
     }
 
@@ -103,4 +118,3 @@ public class Customer {
                 id, name, lastName, birthDate, email, phone, identificationNumber);
     }
 }
-

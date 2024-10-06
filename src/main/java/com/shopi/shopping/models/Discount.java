@@ -1,7 +1,16 @@
 package com.shopi.shopping.models;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "discounts")  // Maps this class to the "discounts" table in the database
 public class Discount {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Database will automatically generate the ID
+    private Long id;  // Unique identifier for the discount
+
     private double rate; // Discount rate
     private String category; // Product category
     private LocalDate startDate; // Discount start date

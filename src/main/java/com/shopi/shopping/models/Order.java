@@ -1,52 +1,69 @@
 package com.shopi.shopping.models;
 import com.shopi.shopping.models.products.Product;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+@Entity
+@Table(name = "orders")  // Maps this class to the "orders" table in the database
 public abstract class Order {
 
-    protected String id; // Unique identifier for the order
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Database will automatically generate the ID
+    protected Long id;  // Unique identifier for the order
 
-    protected List<Product> products; // List of products in the order
-    protected double totalAmount; // Total amount of the order
-    protected List<Discount> appliedDiscounts; // List of applied discounts
+    @ManyToMany // Establish a Many-to-Many relationship with Discount
+    @JoinTable(
+            name = "order_discounts",  // Join table name
+            joinColumns = @JoinColumn(name = "order_id"),  // Foreign key in order_discounts referencing orders
+            inverseJoinColumns = @JoinColumn(name = "discount_id")  // Foreign key in order_discounts referencing discounts
+    )
+    protected List<Discount> appliedDiscounts = new ArrayList<>();  // List of applied discounts
+
+    @ManyToMany // Establish a Many-to-Many relationship with Product
+    @JoinTable(
+            name = "order_products",  // Join table name
+            joinColumns = @JoinColumn(name = "order_id"),  // Foreign key in order_products referencing orders
+            inverseJoinColumns = @JoinColumn(name = "product_id")  // Foreign key in order_products referencing products
+    )
+    protected List<Product> products;  // List of products in the order
+
+    protected double totalAmount;  // Total amount of the order
 
     // Constructor that initializes products and calculates the total
     public Order(List<Product> products) {
-        this.id = UUID.randomUUID().toString(); // Generate a unique ID
-        this.products = products; // Initialize the product list
+        this.products = products;  // Initialize the product list
         calculateTotal();  // Automatically calculate total on creation
-        this.appliedDiscounts = new ArrayList<>(); // Initialize discount to zero
     }
 
     // Getters and Setters
-    public String getId() {
-        return id;
+    public Long getId() {
+        return id;  // Return the order ID
     }
 
     public List<Product> getProducts() {
-        return products; // Return the list of products
+        return products;  // Return the list of products
     }
 
     public double getTotalAmount() {
-        return totalAmount;
+        return totalAmount;  // Return the total amount
     }
 
     public List<Discount> getAppliedDiscounts() {
-        return appliedDiscounts; // Return the list of applied discounts
+        return appliedDiscounts;  // Return the list of applied discounts
     }
 
     public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount;
+        this.totalAmount = totalAmount;  // Set the total amount
     }
 
     // Method to add a discount
     public void addDiscount(Discount discount) {
-        appliedDiscounts.add(discount); // Add a discount to the applied discounts list
+        if (discount.isValid()) { // Only add if the discount is valid
+            appliedDiscounts.add(discount);  // Add a discount to the applied discounts list
+            calculateTotal(); // Recalculate total after adding a discount
+        }
     }
 
     // Abstract method to calculate totals
