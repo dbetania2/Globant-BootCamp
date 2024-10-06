@@ -2,10 +2,11 @@ package com.shopi.shopping.factories;
 import  com.shopi.shopping.models.products.*;  // Import all product classes
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 
 // Factory class for creating different types of products
-
+@Component
 public class ProductFactory {
     private static final Logger logger = LoggerFactory.getLogger(ProductFactory.class);
 
