@@ -6,10 +6,16 @@ import com.shopi.shopping.models.Order;
 import com.shopi.shopping.models.products.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import java.math.RoundingMode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+@Service
 
 public class DiscountService implements DiscountStrategy {
 
@@ -55,16 +61,19 @@ public class DiscountService implements DiscountStrategy {
 
     public double applyDiscounts(Order order, List<Discount> discounts) {
         BigDecimal total = BigDecimal.valueOf(order.getTotalAmount());
+        Set<Discount> alreadyApplied = new HashSet<>(order.getAppliedDiscounts()); // Evitar duplicados
 
         for (Discount discount : discounts) {
-            if (discount.isValid()) {
+            if (!alreadyApplied.contains(discount) && discount.isValid()) {
                 BigDecimal discountAmount = total.multiply(BigDecimal.valueOf(discount.getRate()));
                 total = total.subtract(discountAmount).setScale(2, RoundingMode.HALF_UP);
 
                 // Agregar descuento aplicado
-                order.getAppliedDiscounts().add(discount); // Asegúrate de que esto esté aquí
+                addDiscount(order, discount); // Asegúrate de que esto esté aquí
 
                 logger.info("Applied discount: {} for order. New total: {}", discount.getRate(), total);    //logger------------
+            } else if (alreadyApplied.contains(discount)) {
+                logger.warn("Discount {} already applied to order: {}", discount, order.getId());
             } else {
                 logger.error("Discount is not valid for the current date: {}", LocalDate.now());    //logger------------
             }
@@ -73,6 +82,7 @@ public class DiscountService implements DiscountStrategy {
         order.setTotalAmount(total.doubleValue());
         return total.doubleValue();
     }
+
 
 
     public double calculateDiscount(Order order, Discount discount) {

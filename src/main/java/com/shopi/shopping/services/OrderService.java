@@ -4,16 +4,23 @@ import com.shopi.shopping.models.Discount;
 import com.shopi.shopping.models.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
+
+@Service  // This makes the class a Spring service bean
 public class OrderService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);    //logger------------
     private final DiscountService discountService;
 
     // Constructor to initialize DiscountService
+    @Autowired  // Spring will inject the DiscountService
     public OrderService(DiscountService discountService) {
         this.discountService = discountService;
     }
@@ -21,7 +28,16 @@ public class OrderService {
     // Method to apply discounts to the order
     public void applyDiscounts(Order order, List<Discount> discounts) {
         logger.info("Applying discounts to order: {}", order.getId());    //logger------------
+
+        // Check for already applied discounts
+        Set<Discount> alreadyApplied = new HashSet<>(order.getAppliedDiscounts());
+
         for (Discount discount : discounts) {
+            if (alreadyApplied.contains(discount)) {
+                logger.warn("Discount {} already applied to order: {}", discount, order.getId());
+                continue; // Skip already applied discounts
+            }
+
             if (discount.isValid()) {
                 double discountAmount = discountService.calculateDiscount(order, discount); // Use DiscountService to calculate
                 order.setTotalAmount(order.getTotalAmount() - discountAmount); // Apply the discount to the order total

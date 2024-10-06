@@ -8,27 +8,28 @@ import java.util.Comparator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 
-
+@Service // Indicates that this class is a service managed by Spring
 public class ShoppingCartServices implements ShoppingCartInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartServices.class);   //logger------------
-    private OrderFactory orderFactory;
-    private DiscountService discountService;
+    private static final Logger logger = LoggerFactory.getLogger(ShoppingCartServices.class);    //logger------------
+    private final OrderFactory orderFactory;
+    private final DiscountService discountService;
 
     // Constructor with dependency injection
+    @Autowired // Automatic injection of OrderFactory and DiscountService
     public ShoppingCartServices(OrderFactory orderFactory, DiscountService discountService) {
         this.orderFactory = orderFactory;
         this.discountService = discountService;
-        logger.info("ShoppingCartServices initialized with OrderFactory and DiscountService."); //logger------------
+        logger.info("ShoppingCartServices initialized with OrderFactory and DiscountService.");    //logger------------
     }
-
 
     // Checkout process to create an order and apply discounts if necessary
     public Order checkout(ShoppingCart cart, boolean isFirstPurchase) {
-
-        logger.info("Checkout process started for cart ID: {}", cart.getId());  //llogger------------
+        logger.info("Checkout process started for cart ID: {}", cart.getId());    //logger------------
 
         // Create a new order using the factory
         Order order = orderFactory.createOrder(cart.getProducts());
@@ -37,7 +38,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
 
         // Apply discounts if applicable
         discountService.applyFirstPurchaseDiscount(order, isFirstPurchase);
-        logger.info("Discount applied for first purchase: {}", isFirstPurchase);
+        logger.info("Discount applied for first purchase: {}", isFirstPurchase);    //logger------------
 
         // Return the final order with the calculated total
         return order;
@@ -54,8 +55,6 @@ public class ShoppingCartServices implements ShoppingCartInterface {
         logger.info("Total price for all products: {}", total);    //logger------------
         return total;
     }
-
-
 
     // Print all shopping cart information sorted by price
     public void printCartInfoSortedByPrice(ShoppingCart cart) {
@@ -77,7 +76,6 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     // View products in the cart
     @Override
     public void viewCart(ShoppingCart cart) {
-
         logger.info("Viewing products in cart ID: {}", cart.getId());    //logger------------
 
         System.out.println("Products in the cart:");
@@ -91,7 +89,6 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     // View details of the products in the cart (with description)
     @Override
     public void viewCartDetails(ShoppingCart cart) {
-
         logger.info("Viewing details of products in cart ID: {}", cart.getId());    //logger------------
 
         System.out.println("Details of products in the cart:");
@@ -103,11 +100,28 @@ public class ShoppingCartServices implements ShoppingCartInterface {
                         product.getDescription()));
     }
 
+    // Add product to cart
     public void addProductToCart(ShoppingCart cart, Product product) {
         if (cart != null && product != null) {
-            // Add product to the cart's product list
-            cart.getProducts().add(product);
-            logger.info("Product added to the cart: {}", product.getName());    //logger------------
+            if (!cart.getProducts().contains(product)) { // Only add if not already in cart
+                cart.getProducts().add(product);
+                logger.info("Product added to the cart: {}", product.getName());    //logger------------
+            } else {
+                logger.warn("Product is already in the cart: {}", product.getName());    //logger------------
+            }
+        } else {
+            logger.warn("Cart or product is null.");    //logger------------
+        }
+    }
+
+    // Remove product from cart
+    public void removeProductFromCart(ShoppingCart cart, Product product) {
+        if (cart != null && product != null) {
+            if (cart.getProducts().remove(product)) {
+                logger.info("Product removed from the cart: {}", product.getName());    //logger------------
+            } else {
+                logger.warn("Product not found in the cart: {}", product.getName());    //logger------------
+            }
         } else {
             logger.warn("Cart or product is null.");    //logger------------
         }
@@ -118,6 +132,4 @@ public class ShoppingCartServices implements ShoppingCartInterface {
         // Proceed with buying the products in the cart
         logger.info("Buying products in cart ID: {}", cart.getId());    //logger------------
     }
-
-
 }
