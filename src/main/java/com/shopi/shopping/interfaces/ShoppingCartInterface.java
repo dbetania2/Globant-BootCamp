@@ -10,7 +10,9 @@ public interface ShoppingCartInterface {
 
     void addProductToCart(ShoppingCart cart, Product product);
 
+    void removeProductFromCart(ShoppingCart cart, Product product);
     void viewCartDetails(ShoppingCart cart);
 
     void buyProducts(ShoppingCart cart);
+
 }

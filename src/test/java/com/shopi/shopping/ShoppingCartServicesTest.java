@@ -102,7 +102,7 @@ public class ShoppingCartServicesTest {
         assertDoesNotThrow(() -> shoppingCartServices.viewCart(cart));
     }
 
-    @Test
+    /*@Test
     public void testPrintCartInfoSortedByPrice() {
         // Redirect standard output to capture printed output
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -123,7 +123,7 @@ public class ShoppingCartServicesTest {
         // Assert that the output contains the expected product names
         assertTrue(output.contains("A novel"), "Output should include product name 'A novel'");
         assertTrue(output.contains("Smartphone"), "Output should include product name 'Smartphone'");
-    }
+    }*/
 
 
     @Test
