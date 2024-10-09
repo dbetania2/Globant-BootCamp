@@ -1,14 +1,13 @@
 package com.shopi.shopping.models;
-import com.shopi.shopping.models.Customer;
 import com.shopi.shopping.models.products.Product;
 import jakarta.persistence.*;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "shopping_carts")  // Maps the class to the "shopping_carts" table in the database
-public class ShoppingCart {
+public class ShoppingCart implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Automatically generates the cart ID
@@ -18,8 +17,9 @@ public class ShoppingCart {
     @JoinColumn(name = "customer_id")  // Foreign key column in the shopping_carts table
     private Customer customer;
 
-    @ManyToMany(mappedBy = "shoppingCarts") // Relación inversa con Product
-    private List<Product> products = new ArrayList<>(); // Updated to match the relationship
+    @ManyToMany(mappedBy = "shoppingCarts")
+    private List<Product> products = new ArrayList<>();
+
 
     @Enumerated(EnumType.STRING)  // Store enum as String in the database
     private Status status;

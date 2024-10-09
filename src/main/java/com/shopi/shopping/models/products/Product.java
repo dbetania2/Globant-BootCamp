@@ -2,14 +2,13 @@ package com.shopi.shopping.models.products;
 
 import com.shopi.shopping.models.ShoppingCart;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)  // Strategy for inheritance
-public abstract class Product {
+public abstract class Product  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
