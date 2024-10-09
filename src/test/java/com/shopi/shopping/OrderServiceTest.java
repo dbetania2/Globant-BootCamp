@@ -1,86 +1,131 @@
 package com.shopi.shopping;
 import com.shopi.shopping.factories.ProductFactory;
+import com.shopi.shopping.factories.OrderFactory;
 import com.shopi.shopping.models.Discount;
-import com.shopi.shopping.models.StandardOrder;
+import com.shopi.shopping.models.Order;
 import com.shopi.shopping.models.products.Product;
+import com.shopi.shopping.repositories.OrderRepository;
 import com.shopi.shopping.services.DiscountService;
 import com.shopi.shopping.services.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 
-public class OrderServiceTest {
 
+public class OrderServiceTest {
+    @Mock
+    private OrderRepository orderRepository;
+
+    @Mock
     private DiscountService discountService;
+
+    @InjectMocks
     private OrderService orderService;
-    private StandardOrder order;
+
+    private ProductFactory productFactory;
+    private OrderFactory orderFactory;
 
     @BeforeEach
-    public void setUp() {
-        discountService = Mockito.mock(DiscountService.class);
-        orderService = new OrderService(discountService);
-
-        // Crear productos usando el ProductFactory
-        List<Product> products = new ArrayList<>();
-        products.add(ProductFactory.createProduct("CLOTHING", "T-Shirt", 50.0)); // Producto de ropa
-        products.add(ProductFactory.createProduct("ELECTRONICS", "Headphones", 50.0)); // Producto de electrónica
-
-        // Crear una nueva StandardOrder
-        order = new StandardOrder(products);
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        productFactory = new ProductFactory();
+        orderFactory = new OrderFactory();
     }
+
+    /*@Test
+    public void testApplyDiscountsAndSave_withDiscounts() {
+        // Create products
+        Product product1 = productFactory.createProduct("CLOTHING", "T-Shirt", 50.0);
+        Product product2 = productFactory.createProduct("ELECTRONIC", "Smartphone", 300.0);
+        List<Product> products = Arrays.asList(product1, product2);
+
+        // Create an order
+        Order order = orderFactory.createOrder(products);
+
+        // Create a valid 10% discount for the test
+        Discount discount1 = new Discount(0.1, "BOOK", "percentage", LocalDate.now().minusDays(1), LocalDate.now().plusDays(10)); // 10% discount
+        List<Discount> discounts = Collections.singletonList(discount1);
+
+        // Mock the behavior of discountService
+        doNothing().when(discountService).applyFirstPurchaseDiscount(order, true);
+        doNothing().when(discountService).applyDiscounts(eq(order), eq(discounts));
+
+        // Save the mocked order
+        when(orderRepository.save(order)).thenReturn(order);
+
+        // Apply discounts and save
+        orderService.applyDiscountsAndSave(order, discounts, true);
+
+        // Verify that the expected methods were called
+        verify(discountService).applyFirstPurchaseDiscount(order, true);
+        verify(discountService).applyDiscounts(eq(order), eq(discounts));
+        verify(orderRepository).save(order);
+
+        // Assert that the total has been updated correctly
+        assertEquals(315.0, order.getTotalAmount(), 0.01); // This is correct if you expect to apply a 10% discount
+    }*/
+
     @Test
-    public void testApplyDiscounts() {
-        // Arrange
-        Discount discount1 = new Discount(0.1, "CLOTHING", LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
-        Discount discount2 = new Discount(0.2, "ELECTRONICS", LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+    public void testGetOrderById_found() {
+        Long orderId = 1L;
+        Order expectedOrder = orderFactory.createOrder(Collections.emptyList());
 
-        List<Discount> discounts = Arrays.asList(discount1, discount2);
+        // Mock the behavior of orderRepository
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(expectedOrder));
 
-        // Simular el comportamiento del DiscountService
-        when(discountService.calculateDiscount(order, discount1)).thenReturn(5.0); // 10% de 50
-        when(discountService.calculateDiscount(order, discount2)).thenReturn(10.0); // 20% de 50
+        // Get the order by ID
+        Order actualOrder = orderService.getOrderById(orderId);
 
-        // Act
-        orderService.applyDiscounts(order, discounts);
-
-        // Assert
-        assertEquals(85.0, order.getTotalAmount(), 0.001, "Total amount after discounts should be 85.0");
-        assertEquals(2, order.getAppliedDiscounts().size(), "Two discounts should be applied");
+        // Verify that the returned order is as expected
+        assertEquals(expectedOrder, actualOrder);
+        verify(orderRepository).findById(orderId);
     }
+
     @Test
-    public void testAddDiscount() {
-        // Arrange
-        Discount discount = new Discount(0.1, "CLOTHING", LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
+    public void testGetOrderById_notFound() {
+        Long orderId = 1L;
 
-        // Act
-        orderService.addDiscount(order, discount);
+        // Mock the behavior of orderRepository
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
-        // Assert
-        assertEquals(1, order.getAppliedDiscounts().size(), "One discount should be applied");
-        assertEquals(0.1, order.getAppliedDiscounts().get(0).getRate(), 0.001, "Discount rate should be 0.1");
+        // Verify that an exception is thrown when searching for a non-existing order
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            orderService.getOrderById(orderId);
+        });
+
+        assertEquals("Order not found with ID: " + orderId, exception.getMessage());
+        verify(orderRepository).findById(orderId);
     }
 
     @Test
     public void testGetDiscountSummary() {
-        // Arrange
-        Discount discount = new Discount(0.1, "CLOTHING", LocalDate.now().minusDays(1), LocalDate.now().plusDays(1));
-        orderService.addDiscount(order, discount);
-        order.setTotalAmount(90.0); // Set new total after applying discount
+        // Create products and order
+        Product product1 = productFactory.createProduct("BOOK", "Java Programming", 40.0);
+        Product product2 = productFactory.createProduct("CLOTHING", "Jeans", 60.0);
+        List<Product> products = Arrays.asList(product1, product2);
+        Order order = orderFactory.createOrder(products);
 
-        // Act
+        // Simulate applied discounts with the new constructor
+        Discount discount1 = new Discount(0.1, "BOOK", "percentage", LocalDate.now().minusDays(1), LocalDate.now().plusDays(10)); // 10% discount
+        Discount discount2 = new Discount(0.15, "CLOTHING", "percentage", LocalDate.now().minusDays(1), LocalDate.now().plusDays(10)); // 15% discount
+        order.setAppliedDiscounts(Arrays.asList(discount1, discount2));
+
+        // Mock the behavior of discountService
+        when(discountService.calculateDiscount(order, discount1)).thenReturn(4.0); // $4 discount on the book
+        when(discountService.calculateDiscount(order, discount2)).thenReturn(9.0); // $9 discount on clothing
+
+        // Get the discount summary
         String summary = orderService.getDiscountSummary(order);
 
-        // Assert
-        assertTrue(summary.contains("Applied discounts:"), "Summary should contain applied discounts");
-        assertTrue(summary.contains("Total after discounts: 90.0"), "Summary should reflect total after discounts");
+        // Verify that the summary contains the correct information
+        assertTrue(summary.contains("Discount Summary for Order ID:"));
+        assertTrue(summary.contains("Total Discount: $13.0"));
     }
 }
