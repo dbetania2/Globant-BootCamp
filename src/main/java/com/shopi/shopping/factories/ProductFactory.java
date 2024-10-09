@@ -13,7 +13,7 @@ public class ProductFactory {
     public static Product createProduct(String productType, String name, double price) {
         logger.info("Creating product of type: {}, name: {}, price: {}", productType, name, price);    //logger------------
         switch (productType.toUpperCase()) {
-            case "ELECTRONICS":
+            case "ELECTRONIC":
                 // Create an Electronics product with a default description
                 return new Electronic(price, name, "Default description");
             case "CLOTHING":
