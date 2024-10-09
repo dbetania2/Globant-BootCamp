@@ -16,7 +16,7 @@ public class ProductFactoryTest {
     @Test
     public void testCreateElectronicsProduct() {
         // Arrange
-        String productType = "ELECTRONICS";
+        String productType = "ELECTRONIC";
         String name = "Smartphone";
         double price = 699.99;
 
