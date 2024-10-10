@@ -7,76 +7,70 @@ import com.shopi.shopping.models.products.Electronic;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.repositories.ProductRepository;
 import com.shopi.shopping.services.ProductService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertNotNull;
 
+@ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
-
-    @InjectMocks
-    private ProductService productService;
-
-    @Mock
-    private ProductFactory productFactory;
 
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private ProductFactory productFactory;
+
+    @InjectMocks
+    private ProductService productService;
+
     private Product electronicProduct;
-    private Product clothingProduct;
-    private Product bookProduct;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        electronicProduct = new Electronic(BigDecimal.valueOf(699.99),"Smartphone", " good Smartphone" );
-        clothingProduct = new Clothing(2L, "T-Shirt", BigDecimal.valueOf(19.99));
-        bookProduct = new Book(3L, "Effective Java", BigDecimal.valueOf(39.99));
+        electronicProduct = new Electronic(BigDecimal.valueOf(699.99), "Smartphone", "Latest smartphone model");
+        electronicProduct.setId(1L);
     }
 
     @Test
     public void testCreateProduct() {
         // Arrange
-        String productType = "ELECTRONIC";
-        String name = "Smartphone";
-        BigDecimal price = BigDecimal.valueOf(699.99);
-        when(productFactory.createProduct(productType, name, price)).thenReturn(electronicProduct);
-        when(productRepository.save(any(Product.class))).thenReturn(electronicProduct);
+        when(productFactory.createProduct("ELECTRONIC", "Smartphone", BigDecimal.valueOf(699.99)))
+                .thenReturn(electronicProduct);
+        when(productRepository.save(any(Product.class))).thenReturn(electronicProduct); // Mocking the save method
 
         // Act
-        Product createdProduct = productService.createProduct(productType, name, price);
+        Product createdProduct = productService.createProduct("ELECTRONIC", "Smartphone", BigDecimal.valueOf(699.99));
 
         // Assert
         assertNotNull(createdProduct);
         assertEquals("Smartphone", createdProduct.getName());
-        verify(productRepository, times(1)).save(electronicProduct);
+        verify(productRepository, times(1)).save(electronicProduct); // Asegúrate de que se guarda el producto
     }
 
     @Test
     public void testGetProductById() {
         // Arrange
-        long productId = 1L;
-        when(productRepository.findById(productId)).thenReturn(Optional.of(electronicProduct));
+        when(productRepository.findById(electronicProduct.getId())).thenReturn(Optional.of(electronicProduct));
 
         // Act
-        Product foundProduct = productService.getProductById(productId);
+        Product fetchedProduct = productService.getProductById(electronicProduct.getId());
 
         // Assert
-        assertNotNull(foundProduct);
-        assertEquals(electronicProduct, foundProduct);
-        verify(productRepository, times(1)).findById(productId);
+        assertNotNull(fetchedProduct);
+        assertEquals(electronicProduct.getId(), fetchedProduct.getId());
+        verify(productRepository, times(1)).findById(electronicProduct.getId());
     }
 
     @Test
@@ -93,6 +87,19 @@ public class ProductServiceTest {
     }
 
     @Test
+    public void testDeleteProduct() {
+        // Arrange
+        long productId = electronicProduct.getId();
+        when(productRepository.existsById(productId)).thenReturn(true);
+
+        // Act
+        productService.deleteProduct(productId);
+
+        // Assert
+        verify(productRepository, times(1)).deleteById(productId);
+    }
+
+    @Test
     public void testUpdateNonExistingProduct() {
         // Arrange
         when(productRepository.existsById(electronicProduct.getId())).thenReturn(false);
@@ -105,22 +112,9 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testDeleteProduct() {
-        // Arrange
-        long productId = 1L;
-        when(productRepository.existsById(productId)).thenReturn(true);
-
-        // Act
-        productService.deleteProduct(productId);
-
-        // Assert
-        verify(productRepository, times(1)).deleteById(productId);
-    }
-
-    @Test
     public void testDeleteNonExistingProduct() {
         // Arrange
-        long productId = 1L;
+        long productId = electronicProduct.getId();
         when(productRepository.existsById(productId)).thenReturn(false);
 
         // Act & Assert
@@ -133,49 +127,50 @@ public class ProductServiceTest {
     @Test
     public void testGetAllProducts() {
         // Arrange
-        List<Product> products = new ArrayList<>();
-        products.add(electronicProduct);
-        products.add(clothingProduct);
-        products.add(bookProduct);
-        when(productRepository.findAll()).thenReturn(products);
+        List<Product> productList = new ArrayList<>();
+        productList.add(electronicProduct);
+        when(productRepository.findAll()).thenReturn(productList);
 
         // Act
-        List<Product> foundProducts = productService.getAllProducts();
+        List<Product> fetchedProducts = productService.getAllProducts();
 
         // Assert
-        assertEquals(3, foundProducts.size());
+        assertEquals(1, fetchedProducts.size());
+        assertEquals(electronicProduct, fetchedProducts.get(0));
         verify(productRepository, times(1)).findAll();
     }
 
     @Test
     public void testGetProductsByName() {
         // Arrange
-        List<Product> products = new ArrayList<>();
-        products.add(electronicProduct);
-        when(productRepository.findByName("Smartphone")).thenReturn(products);
+        List<Product> productList = new ArrayList<>();
+        productList.add(electronicProduct);
+        when(productRepository.findByName("Smartphone")).thenReturn(productList);
 
         // Act
-        List<Product> foundProducts = productService.getProductsByName("Smartphone");
+        List<Product> fetchedProducts = productService.getProductsByName("Smartphone");
 
         // Assert
-        assertEquals(1, foundProducts.size());
-        assertEquals(electronicProduct, foundProducts.get(0));
+        assertEquals(1, fetchedProducts.size());
+        assertEquals(electronicProduct, fetchedProducts.get(0));
         verify(productRepository, times(1)).findByName("Smartphone");
     }
 
     @Test
     public void testGetProductsByCategory() {
         // Arrange
-        List<Product> products = new ArrayList<>();
-        products.add(clothingProduct);
-        when(productRepository.findByCategory("CLOTHING")).thenReturn(products);
+        List<Product> productList = new ArrayList<>();
+        productList.add(electronicProduct);
+        when(productRepository.findByCategory("Electronics")).thenReturn(productList);
 
         // Act
-        List<Product> foundProducts = productService.getProductsByCategory("CLOTHING");
+        List<Product> fetchedProducts = productService.getProductsByCategory("Electronics");
 
         // Assert
-        assertEquals(1, foundProducts.size());
-        assertEquals(clothingProduct, foundProducts.get(0));
-        verify(productRepository, times(1)).findByCategory("CLOTHING");
+        assertEquals(1, fetchedProducts.size());
+        assertEquals(electronicProduct, fetchedProducts.get(0));
+        verify(productRepository, times(1)).findByCategory("Electronics");
     }
+    //------------------
+
 }
