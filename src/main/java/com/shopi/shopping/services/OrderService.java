@@ -1,16 +1,13 @@
 package com.shopi.shopping.services;
-
 import com.shopi.shopping.models.Discount;
 import com.shopi.shopping.models.Order;
-import com.shopi.shopping.models.StandardOrder;
 import com.shopi.shopping.repositories.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.HashSet;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 @Service
 public class OrderService {
 
@@ -25,17 +22,23 @@ public class OrderService {
     }
 
     // Method to apply discounts (including first purchase discount) and save the order
-    public void applyDiscountsAndSave(Order order, List<Discount> discounts, boolean isFirstPurchase) {
-        // Apply first purchase discount if necessary
-        discountService.applyFirstPurchaseDiscount(order, isFirstPurchase);
 
-        // Apply other discounts
+    public void applyDiscountsAndSave(Order order, List<Discount> discounts, boolean isFirstPurchase) {
+        // Calculate the initial total of the order
+        order.calculateTotal(); // This should only be called here to set the initial total
+
+        // Apply discounts
+        discountService.applyFirstPurchaseDiscount(order, isFirstPurchase);
         discountService.applyDiscounts(order, discounts);
 
-        // Save the order after applying all discounts
+        // Save the order in the repository
         orderRepository.save(order);
-        logger.info("Order ID: {} saved with total amount: ${}", order.getId(), order.getTotalAmount());
+
+        // Log the final total
+        System.out.println("Final total saved in the order: " + order.getTotalAmount());
     }
+
+
 
     // Save a new order to the database
     public Order saveOrder(Order order) {
@@ -44,26 +47,27 @@ public class OrderService {
     }
 
     // Get order by ID
-    public Order getOrderById(Long orderId) {
-        logger.info("Fetching order with ID: {}", orderId);
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + id));
     }
+
+
 
     // Get a summary of all discounts applied to an order
     public String getDiscountSummary(Order order) {
         StringBuilder summary = new StringBuilder();
-        double totalDiscountAmount = 0.0;
+        BigDecimal totalDiscountAmount = BigDecimal.ZERO;
 
         summary.append("Discount Summary for Order ID: ").append(order.getId()).append("\n");
         summary.append("----------------------------------------------------\n");
 
         for (Discount discount : order.getAppliedDiscounts()) {
-            double discountAmount = discountService.calculateDiscount(order, discount); // Change here
-            totalDiscountAmount += discountAmount;
+            BigDecimal discountAmount = discountService.calculateDiscount(order, discount); // Change here
+            totalDiscountAmount = totalDiscountAmount.add(discountAmount);
 
             summary.append("Category: ").append(discount.getCategory())
-                    .append(" | Rate: ").append(discount.getRate() * 100).append("%")
+                    .append(" | Rate: ").append(discount.getRate().multiply(BigDecimal.valueOf(100))).append("%")
                     .append(" | Amount: $").append(discountAmount).append("\n");
         }
 
@@ -72,4 +76,6 @@ public class OrderService {
 
         return summary.toString();
     }
+
+
 }

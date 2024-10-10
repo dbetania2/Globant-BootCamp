@@ -3,12 +3,11 @@ import com.shopi.shopping.models.Discount;
 import com.shopi.shopping.models.Order;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.repositories.DiscountRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -32,8 +31,9 @@ public class DiscountService {
     }
 
     // Calculate the discount for a given order
-    public double calculateDiscount(Order order, Discount discount) {
-        double discountAmount = order.getTotalAmount() * discount.getRate(); // This calculates the discount correctly
+    public BigDecimal calculateDiscount(Order order, Discount discount) {
+        // This calculates the discount correctly
+        BigDecimal discountAmount = order.getTotalAmount().multiply(discount.getRate()); // Assume discount rate is in BigDecimal
         logger.debug("Calculated discount for order ID {}: ${}", order.getId(), discountAmount);
         return discountAmount;
     }
@@ -41,8 +41,8 @@ public class DiscountService {
     // Method to apply a first purchase discount based on a boolean value
     public void applyFirstPurchaseDiscount(Order order, boolean isFirstPurchase) {
         if (isFirstPurchase) {
-            double discountAmount = order.getTotalAmount() * 0.10; // 10% discount
-            order.setTotalAmount(order.getTotalAmount() - discountAmount); // Updates the total
+            BigDecimal discountAmount = order.getTotalAmount().multiply(BigDecimal.valueOf(0.10)); // 10% discount
+            order.setTotalAmount(order.getTotalAmount().subtract(discountAmount)); // Updates the total
             logger.info("Applied first purchase discount of 10.0% to order ID: {}", order.getId());
         } else {
             logger.info("No first purchase discount applied to order ID: {}", order.getId());
@@ -50,26 +50,42 @@ public class DiscountService {
     }
 
     public void applyDiscounts(Order order, List<Discount> discounts) {
-        double originalAmount = order.getTotalAmount();
-        double totalDiscountAmount = 0.0;
+        BigDecimal total = order.getTotalAmount();
+        logger.info("Original total for order ID {}: ${}", order.getId(), total);
 
-        logger.debug("Applying discounts to order ID: {} with original amount: ${}", order.getId(), originalAmount);
-
+        // Only apply a discount if it is valid
         for (Discount discount : discounts) {
-            if (isDiscountValidForOrder(order, discount)) {
-                order.addDiscount(discount);
-                double discountAmount = originalAmount * discount.getRate();
-                totalDiscountAmount += discountAmount;
-                logger.debug("Applied discount ID {}: Amount deducted: ${}", discount.getId(), discountAmount);
-            } else {
-                logger.debug("Discount ID {} is not valid for order ID: {}", discount.getId(), order.getId());
+            if (isDiscountValid(discount)) {
+                // Check if the discount applies to any of the products in the order
+                boolean isApplicable = order.getProducts().stream()
+                        .anyMatch(product -> product.getType().equals(discount.getCategory()));
+
+                if (isApplicable) {
+                    // Calculate and apply the discount
+                    BigDecimal discountAmount = total.multiply(discount.getRate());
+                    total = total.subtract(discountAmount);
+
+                    // Add the applied discount to the order's list of discounts
+                    order.getAppliedDiscounts().add(discount);  // Ensure that order has an initialized list
+
+                    // Log the applied discount
+                    logger.info("Discount applied to order ID {}: Discount ID: {}, Discount amount: ${}",
+                            order.getId(), discount.getId(), discountAmount);
+                } else {
+                    logger.debug("Discount ID {} not applicable to order ID {}. Discount category: {} does not match products in the order.",
+                            discount.getId(), order.getId(), discount.getCategory());
+                }
             }
         }
 
-        // Updates the order total
-        order.setTotalAmount(originalAmount - totalDiscountAmount);
-        logger.info("Total amount after applying discounts for order ID {}: ${}", order.getId(), order.getTotalAmount());
+        // Log the final total after applying discounts
+        logger.info("Final total after applying discounts for order ID {}: ${}", order.getId(), total);
+
+        order.setTotalAmount(total); // Ensure that the total is updated
     }
+
+
+
 
     // Checks if a discount is valid for an order
     public boolean isDiscountValidForOrder(Order order, Discount discount) {
@@ -89,14 +105,20 @@ public class DiscountService {
         return isValid;
     }
 
-    public double applyProductDiscount(Product product, Discount discount) {
+    public BigDecimal applyProductDiscount(Product product, Discount discount) {
         if (isDiscountValid(discount)) {
-            double discountAmount = discount.getRate() * product.getPrice();
-            product.setPrice(product.getPrice() - discountAmount);
-            logger.info("Applied discount to product ID {}: New price: ${}", product.getId(), product.getPrice());
-            return product.getPrice();
+            // Calculate the discount amount using BigDecimal
+            BigDecimal discountAmount = discount.getRate().multiply(product.getPrice());
+
+            // Set the new price of the product
+            BigDecimal newPrice = product.getPrice().subtract(discountAmount);
+            product.setPrice(newPrice);
+
+            logger.info("Applied discount to product ID {}: New price: ${}", product.getId(), newPrice);
+            return newPrice; // Return the new price
         }
         logger.info("No discount applied to product ID {}: Price remains unchanged: ${}", product.getId(), product.getPrice());
         return product.getPrice(); // No discount applied, so the price remains unchanged
     }
+
 }
