@@ -1,51 +1,81 @@
 package com.shopi.shopping.services;
-
 import com.shopi.shopping.models.Discount;
 import com.shopi.shopping.models.Order;
+import com.shopi.shopping.repositories.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
 import java.util.List;
-
-
+@Service
 public class OrderService {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);    //logger------------
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+    private final OrderRepository orderRepository;
     private final DiscountService discountService;
 
-    // Constructor to initialize DiscountService
-    public OrderService(DiscountService discountService) {
+    @Autowired
+    public OrderService(OrderRepository orderRepository, DiscountService discountService) {
+        this.orderRepository = orderRepository;
         this.discountService = discountService;
     }
 
-    // Method to apply discounts to the order
-    public void applyDiscounts(Order order, List<Discount> discounts) {
-        logger.info("Applying discounts to order: {}", order.getId());    //logger------------
-        for (Discount discount : discounts) {
-            if (discount.isValid()) {
-                double discountAmount = discountService.calculateDiscount(order, discount); // Use DiscountService to calculate
-                order.setTotalAmount(order.getTotalAmount() - discountAmount); // Apply the discount to the order total
-                addDiscount(order, discount); // Add the discount to the applied discounts
-                logger.info("Applied discount of {}% on category {}: Amount deducted: {}",    //logger-------------------
-                        discount.getRate() * 100, discount.getCategory(), discountAmount);
-            } else {
-                logger.warn("Discount is not valid: {} on order: {}", discount, order.getId());    //logger------------
-            }
-        }
+    // Method to apply discounts (including first purchase discount) and save the order
+
+    public void applyDiscountsAndSave(Order order, List<Discount> discounts, boolean isFirstPurchase) {
+        // Calculate the initial total of the order
+        order.calculateTotal(); // This should only be called here to set the initial total
+
+        // Apply discounts
+        discountService.applyFirstPurchaseDiscount(order, isFirstPurchase);
+        discountService.applyDiscounts(order, discounts);
+
+        // Save the order in the repository
+        orderRepository.save(order);
+
+        // Log the final total
+        System.out.println("Final total saved in the order: " + order.getTotalAmount());
     }
 
-    // Method to add a discount to the list of applied discounts for the order
-    public void addDiscount(Order order, Discount discount) {
-        order.getAppliedDiscounts().add(discount); // Add the discount to the list of applied discounts
+
+
+    // Save a new order to the database
+    public Order saveOrder(Order order) {
+        logger.info("Saving new order with {} products", order.getProducts().size());
+        return orderRepository.save(order);
     }
 
-    // Method to obtain a summary of the applied discounts
+    // Get order by ID
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + id));
+    }
+
+
+
+    // Get a summary of all discounts applied to an order
     public String getDiscountSummary(Order order) {
-        StringBuilder summary = new StringBuilder("Applied discounts:\n");
+        StringBuilder summary = new StringBuilder();
+        BigDecimal totalDiscountAmount = BigDecimal.ZERO;
+
+        summary.append("Discount Summary for Order ID: ").append(order.getId()).append("\n");
+        summary.append("----------------------------------------------------\n");
+
         for (Discount discount : order.getAppliedDiscounts()) {
-            summary.append(discount.toString()).append("\n"); // Append each discount's information to the summary
+            BigDecimal discountAmount = discountService.calculateDiscount(order, discount); // Change here
+            totalDiscountAmount = totalDiscountAmount.add(discountAmount);
+
+            summary.append("Category: ").append(discount.getCategory())
+                    .append(" | Rate: ").append(discount.getRate().multiply(BigDecimal.valueOf(100))).append("%")
+                    .append(" | Amount: $").append(discountAmount).append("\n");
         }
-        summary.append("Total after discounts: ").append(order.getTotalAmount()); // Append the total amount after discounts
-        return summary.toString(); // Return the summary
+
+        summary.append("----------------------------------------------------\n");
+        summary.append("Total Discount: $").append(totalDiscountAmount).append("\n");
+
+        return summary.toString();
     }
+
+
 }

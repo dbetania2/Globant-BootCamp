@@ -1,35 +1,41 @@
 package com.shopi.shopping.models;
-
-import com.shopi.shopping.models.Customer;
 import com.shopi.shopping.models.products.Product;
-
+import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
+@Entity
+@Table(name = "shopping_carts")  // Maps the class to the "shopping_carts" table in the database
+public class ShoppingCart implements Serializable{
 
-public class ShoppingCart {
-
-    private static long cartIdCounter = 1;  // Static counter for unique cart IDs
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Automatically generates the cart ID
     private long id;
+
+    @ManyToOne  // Relationship with Customer
+    @JoinColumn(name = "customer_id")  // Foreign key column in the shopping_carts table
     private Customer customer;
-    private List<Product> products;
+
+    @ManyToMany(mappedBy = "shoppingCarts")
+    private List<Product> products = new ArrayList<>();
+
+
+    @Enumerated(EnumType.STRING)  // Store enum as String in the database
     private Status status;
 
     public enum Status {
         DRAFT, SUBMIT
     }
 
+    private static final AtomicLong idCounter = new AtomicLong(0);
+
     // Constructor
     public ShoppingCart(Customer customer) {
-        this.id = cartIdCounter++;  // Generates a unique ID for the cart
-        this.products = new ArrayList<>();  // Initialize empty product list
-        this.status = Status.DRAFT;  // Default status is DRAFT
         this.customer = customer;  // Assign customer to the cart
-    }
-
-    // Method to generate a unique ID
-    private synchronized long generateCartId() {
-        return cartIdCounter++;  // Returns current value, then increments
+        this.status = Status.DRAFT;  // Default status is DRAFT
+        this.id = idCounter.incrementAndGet();
     }
 
     // Getters and Setters
@@ -53,6 +59,14 @@ public class ShoppingCart {
         this.status = status;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     // Print all cart information
     @Override
     public String toString() {
@@ -73,5 +87,18 @@ public class ShoppingCart {
         }
 
         return printCart.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ShoppingCart that = (ShoppingCart) obj;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
     }
 }
