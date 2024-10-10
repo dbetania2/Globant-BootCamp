@@ -1,9 +1,13 @@
 package com.shopi.shopping.models;
 import com.shopi.shopping.models.products.Product;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
+
+
 
 @Entity
 @Table(name = "orders")
@@ -29,18 +33,21 @@ public abstract class Order {
     )
     protected List<Product> products;
 
-    protected double totalAmount;
+    protected BigDecimal totalAmount = BigDecimal.ZERO; // Use BigDecimal for total amount precision
 
-    public Order() {
-        // No-argument constructor
-    }
+    private static final AtomicLong idCounter = new AtomicLong(0);
 
+    // No-argument constructor
+    public Order() {}
+
+    // Constructor to initialize with products
     public Order(List<Product> products) {
         this.products = products;
-        calculateTotal();  // Calculate total when creating the order
+        this.id = idCounter.incrementAndGet();
+        calculateTotal();  // Calculate the total amount when creating the order
     }
 
-    // Getters and Setters
+    // Getters and setters for order properties
     public Long getId() {
         return id;
     }
@@ -63,7 +70,7 @@ public abstract class Order {
         return products;
     }
 
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
@@ -71,33 +78,36 @@ public abstract class Order {
         return appliedDiscounts;
     }
 
-    // Method to calculate the total of the order considering products and discounts
+    // Method to calculate the total amount based on the products and discounts
     public void calculateTotal() {
-        totalAmount = products.stream()
-                .mapToDouble(Product::getPrice)
-                .sum();
+        BigDecimal total = BigDecimal.ZERO;
 
-        totalAmount = Math.max(totalAmount, 0);
-    }
+        // Log the start of the calculation
+        System.out.println("Calculando total para los productos...");
 
-    // Method to add a discount if it hasn't been applied before
-    public void addDiscount(Discount discount) {
-        // Check if the discount is not null and hasn't been applied before
-        if (discount != null && !appliedDiscounts.contains(discount)) {
-            // Add the discount to the list of applied discounts
-            appliedDiscounts.add(discount);
-
-            // Calculate the new total of the order
-            calculateTotal(); // Update the total of the order after adding the discount
+        for (Product product : products) {
+            total = total.add(product.getPrice());
+            // Log each product price
+            System.out.println("Añadiendo precio del producto: " + product.getName() + " - Precio: " + product.getPrice());
         }
+
+        // Log the total calculated before updating the order total
+        System.out.println("Total calculado antes de establecer: " + total);
+
+        setTotalAmount(total);
+
+        // Log the total set
+        System.out.println("Total establecido en la orden: " + getTotalAmount());
     }
 
+
+    // Override the toString method to provide a readable representation of the order
     @Override
     public String toString() {
         return "Order ID: " + id + ", Total Amount: " + totalAmount + ", Discounts Applied: " + appliedDiscounts.size();
     }
 
-    // Optional implementation of equals and hashCode if needed
+    // Optional implementation of equals and hashCode methods for entity equality
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -111,12 +121,13 @@ public abstract class Order {
         return Objects.hash(id);
     }
 
-    public void setTotalAmount(double totalAmount) {
-        this.totalAmount = totalAmount; // Set the value directly
+    // Method to set the total amount directly
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
-    // Method to check if the discount has already been applied
+    // Method to check if a discount has already been applied
     public boolean hasDiscount(Discount discount) {
-        return appliedDiscounts.contains(discount); // Return true if the discount is already in the list
+        return appliedDiscounts.contains(discount);
     }
 }

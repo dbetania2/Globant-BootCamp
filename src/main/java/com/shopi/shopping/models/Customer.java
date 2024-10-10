@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "customers")  // Maps the class to the "customers" table in the database
-public class Customer implements Serializable {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // The database will automatically generate the ID

@@ -1,5 +1,7 @@
 package com.shopi.shopping.models;
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -12,7 +14,7 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Database will automatically generate the ID
     private Long id;  // Unique identifier for the discount
 
-    private double rate; // Discount rate
+    private BigDecimal rate; // Discount rate
 
     public Long getId() {
         return id;
@@ -32,7 +34,7 @@ public class Discount {
     }
 
     // Constructor
-    public Discount(double rate, String category, String type, LocalDate startDate, LocalDate endDate) {
+    public Discount(BigDecimal rate, String category, String type, LocalDate startDate, LocalDate endDate) {
         setRate(rate); // Use the setter to apply validation
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date must be before or equal to end date.");
@@ -44,7 +46,7 @@ public class Discount {
     }
 
     // Getters
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
@@ -78,9 +80,9 @@ public class Discount {
     }
 
     // Method to set the rate of the discount
-    public void setRate(double rate) {
+    public void setRate(BigDecimal rate) {
         // Validate that the rate is between 0 and 1
-        if (rate < 0 || rate > 1) {
+        if (rate.compareTo(BigDecimal.ZERO) < 0 || rate.compareTo(BigDecimal.ONE) > 0) {
             throw new IllegalArgumentException("Discount rate must be between 0 and 1.");
         }
         this.rate = rate; // Assign the valid rate to the field
@@ -97,7 +99,7 @@ public class Discount {
         if (this == obj) return true;
         if (!(obj instanceof Discount)) return false;
         Discount other = (Discount) obj;
-        return Double.compare(other.rate, rate) == 0 &&
+        return rate.compareTo(other.rate) == 0 &&
                 Objects.equals(category, other.category) &&
                 Objects.equals(type, other.type) && // Include type in equality check
                 Objects.equals(startDate, other.startDate) &&

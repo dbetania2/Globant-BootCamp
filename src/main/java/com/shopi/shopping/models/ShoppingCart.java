@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @Table(name = "shopping_carts")  // Maps the class to the "shopping_carts" table in the database
@@ -28,10 +29,13 @@ public class ShoppingCart implements Serializable{
         DRAFT, SUBMIT
     }
 
+    private static final AtomicLong idCounter = new AtomicLong(0);
+
     // Constructor
     public ShoppingCart(Customer customer) {
         this.customer = customer;  // Assign customer to the cart
         this.status = Status.DRAFT;  // Default status is DRAFT
+        this.id = idCounter.incrementAndGet();
     }
 
     // Getters and Setters
@@ -83,5 +87,18 @@ public class ShoppingCart implements Serializable{
         }
 
         return printCart.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ShoppingCart that = (ShoppingCart) obj;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
     }
 }
