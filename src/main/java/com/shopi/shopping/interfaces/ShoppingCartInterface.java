@@ -8,7 +8,7 @@ public interface ShoppingCartInterface {
 
     void viewCart(ShoppingCart cart);
 
-    void addProductToCart(ShoppingCart cart, Product product);
+    boolean addProductToCart(ShoppingCart cart, Product product);
 
     void removeProductFromCart(ShoppingCart cart, Product product);
     void viewCartDetails(ShoppingCart cart);
