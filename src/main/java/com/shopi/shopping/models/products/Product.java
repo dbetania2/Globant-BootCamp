@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "products")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)  // Strategy for inheritance
+@Table(name = "products")  // Table name for all product types
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "product_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Product  {
 
     @Id
