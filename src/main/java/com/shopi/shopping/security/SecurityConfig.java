@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-
 public class SecurityConfig {
 
     @Value("${spring.security.user.name}")
@@ -29,12 +28,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .anyRequest().hasRole("ADMIN") // Only users with ADMIN role can access
-                .and()
-                .formLogin(form -> form // Configures the login
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll() // Allows access to Actuator endpoints
+                        .anyRequest().hasRole("ADMIN") // Only users with the ADMIN role can access other routes
+                )
+                .formLogin(form -> form
                         .loginPage("/login") // Custom login page
-                        .defaultSuccessUrl("/home", true) // Redirect to /home after successful login
+                        .defaultSuccessUrl("/home", true) // Redirects to /home after a successful login
                         .permitAll() // Allows everyone to access the login page
                 )
                 .logout(logout -> logout
@@ -43,5 +43,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 }
