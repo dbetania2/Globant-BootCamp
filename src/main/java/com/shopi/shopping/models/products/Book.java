@@ -8,6 +8,10 @@ import java.math.BigDecimal;
 @DiscriminatorValue("BOOK")  // Specifies the discriminator value for this subclass
 public class Book extends Product {
 
+    public Book() {
+        super();
+    }
+
     // Constructor to initialize the book product
     public Book(BigDecimal price, String name, String description) {
         super(price, name, description);

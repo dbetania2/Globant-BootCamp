@@ -10,6 +10,10 @@ import java.math.BigDecimal;
 @DiscriminatorValue("ELECTRONIC")  // Specifies the discriminator value for this subclass
 public class Electronic extends Product {
 
+    public Electronic() {
+        super();
+    }
+
     // Constructor to initialize the electronic product
     public Electronic(BigDecimal price, String name, String description) {
         super(price, name, description);
