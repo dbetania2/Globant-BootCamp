@@ -15,8 +15,9 @@ public abstract class Product  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @Column(nullable = false)
     private BigDecimal price;
+    @Column(nullable = false)
     private String name;
     private String description;
 
@@ -29,6 +30,9 @@ public abstract class Product  {
     )
     private List<ShoppingCart> shoppingCarts = new ArrayList<>(); // Updated to match the relationship
 
+    public Product(){
+
+    }
     // Constructor to initialize product details
     protected Product(BigDecimal price, String name, String description) {
         this.price = price;
