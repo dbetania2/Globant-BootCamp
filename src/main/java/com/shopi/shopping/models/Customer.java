@@ -4,23 +4,42 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
+
 
 @Entity
 @Table(name = "customers")  // Maps the class to the "customers" table in the database
-public class Customer {
+public class Customer  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // The database will automatically generate the ID
     private Long id;
 
+    @NotBlank(message = "Name is required.")
     private String name;
+
+    @NotBlank(message = "Last name is required.")
     private String lastName;
+
+    @NotNull(message = "Birth date is required.")
     private LocalDate birthDate;
+
+    @NotBlank(message = "Email is required.")
+    @Email(message = "Email should be valid.")
     private String email;
+
+    @NotBlank(message = "Phone number is required.")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be valid.")
     private String phone;
+
+    @NotBlank(message = "Identification number is required.")
     private String identificationNumber;
 
     // Default constructor required by JPA
@@ -40,6 +59,11 @@ public class Customer {
     // Getters
     public Long getId() {
         return id;
+    }
+
+    // Setter for ID (for updates)
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -66,8 +90,32 @@ public class Customer {
         return identificationNumber;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setIdentificationNumber(String identificationNumber) {
+        this.identificationNumber = identificationNumber;
+    }
+
     // Static Builder class
-    public static class CustomerBuilder {
+    public static class CustomerBuilder  {
         private String name;
         private String lastName;
         private LocalDate birthDate;
@@ -101,14 +149,22 @@ public class Customer {
             return this;
         }
 
+
+        public CustomerBuilder() {
+        }
+
         public Customer build() {
-            // Validations
+            // Validaciones para campos obligatorios
             if (name == null || name.isEmpty()) {
                 throw new IllegalArgumentException("Name is required.");
+            }
+            if (lastName == null || lastName.isEmpty()) {
+                throw new IllegalArgumentException("Last name is required.");
             }
             if (email == null || email.isEmpty()) {
                 throw new IllegalArgumentException("Email is required.");
             }
+
             return new Customer(this);
         }
     }
@@ -117,5 +173,18 @@ public class Customer {
     public String toString() {
         return String.format("Customer ID: %d, Name: %s %s, Birth Date: %s, Email: %s, Phone: %s, Identification: %s",
                 id, name, lastName, birthDate, email, phone, identificationNumber);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Customer)) return false;
+        Customer customer = (Customer) o;
+        return id != null && id.equals(customer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
