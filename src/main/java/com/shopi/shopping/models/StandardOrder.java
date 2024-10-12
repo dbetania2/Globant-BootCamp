@@ -1,12 +1,13 @@
 package com.shopi.shopping.models;
 import com.shopi.shopping.models.products.Product;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "standard_orders") // Optional: Specify the table name
+@DiscriminatorValue("STANDARD-ORDER")  // Specifies the discriminator value for this subclass
 public class StandardOrder extends Order {
 
     // No-argument constructor for JPA
