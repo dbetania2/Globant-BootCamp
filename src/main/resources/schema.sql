@@ -13,10 +13,11 @@ CREATE TABLE customers (
 CREATE TABLE products (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,    -- Auto-incremented primary key for products
     price DECIMAL(10, 2) NOT NULL,           -- Price of the product
-    name VARCHAR(255) NOT NULL,               -- Product name
+    name VARCHAR(255) NOT NULL,              -- Product name
     description VARCHAR(255),                 -- Description of the product
-    dtype VARCHAR(31) NOT NULL                -- Discriminator column to identify the type (e.g., "BOOK", "CLOTHING", "ELECTRONIC")
+    product_type VARCHAR(31) NOT NULL                -- Discriminator column to identify the type (e.g., "BOOK", "CLOTHING", "ELECTRONIC")
 );
+
 
 -- Create table for orders
 CREATE TABLE orders (
@@ -37,7 +38,7 @@ CREATE TABLE order_products (
 CREATE TABLE discounts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,        -- Auto-incremented primary key for discounts
     rate DECIMAL(5, 4) NOT NULL,                 -- Discount rate (e.g., 0.10 for 10%)
-    category VARCHAR(255),                        -- Product category
+    category VARCHAR(255),                        -- Product category (consider renaming or removing if not needed)
     type VARCHAR(255),                           -- Discount type
     start_date DATE NOT NULL,                    -- Discount start date
     end_date DATE NOT NULL                       -- Discount end date
@@ -55,7 +56,6 @@ CREATE TABLE order_discounts (
 -- Create table for standard_orders, extending orders
 CREATE TABLE IF NOT EXISTS standard_orders (
     id BIGINT PRIMARY KEY,                     -- ID of the standard order (reference to orders)
-    total_amount DECIMAL(10, 2) NOT NULL,     -- Total amount for the standard order
     FOREIGN KEY (id) REFERENCES orders(id) ON DELETE CASCADE -- Foreign key relationship with orders
 );
 
@@ -75,5 +75,4 @@ CREATE TABLE IF NOT EXISTS shopping_cart_products (
     FOREIGN KEY (cart_id) REFERENCES shopping_carts(id) ON DELETE CASCADE, -- Foreign key constraint for cart_id
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE -- Foreign key constraint for product_id
 );
-
 
