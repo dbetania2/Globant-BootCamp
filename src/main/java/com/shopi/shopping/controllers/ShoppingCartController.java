@@ -1,5 +1,8 @@
 package com.shopi.shopping.controllers;
 import com.shopi.shopping.models.ShoppingCart;
+import com.shopi.shopping.models.products.Product;
+import com.shopi.shopping.services.ProductService;
+import com.shopi.shopping.services.ShoppingCartServices;
 import com.shopi.shopping.repositories.ShoppingCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,12 @@ public class ShoppingCartController {
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
+
+    @Autowired
+    private ShoppingCartServices shoppingCartService;
+
+    @Autowired
+    private ProductService productService;
 
     // Create or update a shopping cart
     @PostMapping
@@ -61,4 +70,32 @@ public class ShoppingCartController {
         List<ShoppingCart> carts = shoppingCartRepository.findByStatus(status);
         return ResponseEntity.ok(carts);
     }
+
+    //----------
+    @PostMapping("/{cartId}/products/{productId}")
+    public ResponseEntity<ShoppingCart> addProductToCart(@PathVariable Long cartId, @PathVariable Long productId) {
+        // Retrieve the cart
+        Optional<ShoppingCart> optionalCart = shoppingCartRepository.findById(cartId);
+        if (!optionalCart.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Cart not found
+        }
+        ShoppingCart cart = optionalCart.get();
+
+        // Retrieve the product using the productService
+        Product product = productService.getProductById(productId);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Product not found
+        }
+
+        // Call the service to add the product to the cart
+        boolean added = shoppingCartService.addProductToCart(cart, product);
+        if (!added) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // Product already exists in the cart
+        }
+
+        // Save the updated cart
+        shoppingCartRepository.save(cart);
+        return ResponseEntity.ok(cart); // Return the updated cart
+    }
+
 }
