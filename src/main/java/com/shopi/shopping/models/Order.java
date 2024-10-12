@@ -10,7 +10,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orders")  // Table name for all product types
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // Use SINGLE_TABLE strategy for inheritance
+@DiscriminatorColumn(name = "order_type") // Column to differentiate between order types
 public abstract class Order {
 
     @Id
