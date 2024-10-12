@@ -119,7 +119,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     }
 
 
-    // Print all shopping cart information sorted by price
+    // Print all shopping cart information sorted by price--------------
     public void printCartInfoSortedByPrice(ShoppingCart cart) {
         if (cart == null) {
             logger.warn("Cart is null. Cannot print information.");
@@ -171,7 +171,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
                     product.getId(), product.getName(), product.getPrice(), product.getDescription());
         });
     }
-    // Add product to cart
+    // Add product to cart---------------------------------
     @Override
     public boolean addProductToCart(ShoppingCart cart, Product product) {
         logger.info("Attempting to add product ID: {} - Name: {} to cart ID: {}",

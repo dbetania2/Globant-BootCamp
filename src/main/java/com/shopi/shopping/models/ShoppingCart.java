@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @Table(name = "shopping_carts")  // Maps the class to the "shopping_carts" table in the database
-public class ShoppingCart implements Serializable{
+public class ShoppingCart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Automatically generates the cart ID
@@ -30,7 +30,9 @@ public class ShoppingCart implements Serializable{
     }
 
     private static final AtomicLong idCounter = new AtomicLong(0);
-
+    public ShoppingCart() {
+        this.products = new ArrayList<>();
+    }
     // Constructor
     public ShoppingCart(Customer customer) {
         this.customer = customer;  // Assign customer to the cart
@@ -49,6 +51,10 @@ public class ShoppingCart implements Serializable{
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Status getStatus() {
