@@ -157,19 +157,22 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testGetProductsByCategory() {
+    public void testGetProductsByType() {
         // Arrange
         List<Product> productList = new ArrayList<>();
+        Product electronicProduct = new Electronic();  // Asegúrate de que esta clase esté bien definida
         productList.add(electronicProduct);
-        when(productRepository.findByCategory("Electronics")).thenReturn(productList);
+
+        // Simulamos la respuesta del repositorio para el tipo "Electronic"
+        when(productRepository.findByProductType(Electronic.class)).thenReturn(productList);
 
         // Act
-        List<Product> fetchedProducts = productService.getProductsByCategory("Electronics");
+        List<Product> fetchedProducts = productService.getProductsByType(Electronic.class);
 
         // Assert
         assertEquals(1, fetchedProducts.size());
         assertEquals(electronicProduct, fetchedProducts.get(0));
-        verify(productRepository, times(1)).findByCategory("Electronics");
+        verify(productRepository, times(1)).findByProductType(Electronic.class);
     }
     //------------------
 

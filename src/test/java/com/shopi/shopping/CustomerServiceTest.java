@@ -39,18 +39,25 @@ public class CustomerServiceTest {
     @Test
     void createCustomer_ShouldSaveCustomer() {
         // Arrange
-        Customer customer = customerBuilder.build(); // Creating a Customer object using the builder
-        when(customerRepository.save(any(Customer.class))).thenReturn(customer); // Stubbing the save method
+        Customer customer = new Customer.CustomerBuilder("John", "Doe")
+                .setBirthDate(LocalDate.of(1990, 1, 1))
+                .setEmail("john.doe@example.com")
+                .setPhone("+1234567890")
+                .setIdentificationNumber("123456789")
+                .build(); // Creando un objeto Customer usando el builder
+
+        // Simular que el repositorio guarda correctamente el cliente
+        when(customerRepository.save(any(Customer.class))).thenReturn(customer); // Stubbing el método save
 
         // Act
-        Customer createdCustomer = customerService.createCustomer(customerBuilder); // Calling the createCustomer method
+        Customer createdCustomer = customerService.createCustomer(customer); // Llamando al método createCustomer con el Customer
 
         // Assert
-        assertNotNull(createdCustomer); // Asserting that the created customer is not null
-        assertEquals("John", createdCustomer.getName()); // Asserting the name of the created customer
-        assertEquals("Doe", createdCustomer.getLastName()); // Asserting the last name of the created customer
+        assertNotNull(createdCustomer); // Asegurando que el cliente creado no es nulo
+        assertEquals("John", createdCustomer.getName()); // Asegurando que el nombre del cliente creado es correcto
+        assertEquals("Doe", createdCustomer.getLastName()); // Asegurando que el apellido del cliente creado es correcto
 
-        // Verifying that the Customer was saved correctly
+        // Verificando que el cliente fue guardado correctamente
         verify(customerRepository, times(1)).save(argThat(c ->
                 c.getName().equals("John") &&
                         c.getLastName().equals("Doe") &&
@@ -75,13 +82,34 @@ public class CustomerServiceTest {
     @Test
     void updateCustomer_ShouldUpdateCustomer() {
         // Arrange
-        Customer customer = customerBuilder.build(); // Creating a Customer object
+        Customer existingCustomer = new Customer.CustomerBuilder("John", "Doe")
+                .setBirthDate(LocalDate.of(1990, 1, 1))
+                .setEmail("john.doe@example.com")
+                .setPhone("1234567890")
+                .setIdentificationNumber("ID123456")
+                .build();
+
+        // Simula el comportamiento del repositorio para encontrar el cliente existente
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(existingCustomer));
+
+        // Simula el comportamiento del repositorio para guardar el cliente actualizado
+        when(customerRepository.save(any(Customer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Crea el CustomerBuilder para los nuevos datos
+        Customer.CustomerBuilder updatedBuilder = new Customer.CustomerBuilder("Jane", "Doe")
+                .setBirthDate(LocalDate.of(1992, 2, 2))
+                .setEmail("jane.doe@example.com")
+                .setPhone("0987654321")
+                .setIdentificationNumber("ID654321");
 
         // Act
-        customerService.updateCustomer(customer); // Calling the updateCustomer method
+        Customer updatedCustomer = customerService.updateCustomer(1L, updatedBuilder.build());
 
         // Assert
-        verify(customerRepository, times(1)).save(customer); // Verifying that the customer was saved once
+        assertNotNull(updatedCustomer);
+        assertEquals("Jane", updatedCustomer.getName());
+        assertEquals("Doe", updatedCustomer.getLastName());
+        verify(customerRepository, times(1)).save(any(Customer.class));
     }
 
     @Test
@@ -125,7 +153,7 @@ public class CustomerServiceTest {
     void getCustomersByFirstNameContaining_ShouldReturnCustomers() {
         // Arrange
         Customer customer = customerBuilder.build(); // Creating a Customer object
-        when(customerRepository.findByFirstNameContaining(any(String.class))).thenReturn(Collections.singletonList(customer)); // Stubbing the findByFirstNameContaining method
+        when(customerRepository.findByNameContaining(any(String.class))).thenReturn(Collections.singletonList(customer)); // Stubbing the findByFirstNameContaining method
 
         // Act
         List<Customer> customers = customerService.getCustomersByFirstNameContaining("Joh"); // Calling the method to get customers by first name containing substring
