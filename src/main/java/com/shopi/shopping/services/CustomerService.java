@@ -1,4 +1,5 @@
 package com.shopi.shopping.services;
+import com.shopi.shopping.exceptions.exceptionCustomer.CustomerNotFoundException;
 import com.shopi.shopping.models.Customer;
 import com.shopi.shopping.repositories.CustomerRepository;
 import org.slf4j.Logger;
@@ -21,23 +22,45 @@ public class CustomerService {
     }
 
     // Create a new customer
-    public Customer createCustomer(Customer.CustomerBuilder builder) {
-        logger.info("Creating a new customer: {}", builder);
-        Customer customer = builder.build();
+    public Customer createCustomer(Customer customer) {
+        logger.info("Creating a new customer: {}", customer);
         return customerRepository.save(customer);
     }
+
 
     // Fetch customer by ID
     public Optional<Customer> getCustomerById(Long id) {
         logger.info("Fetching customer with ID: {}", id);
         return customerRepository.findById(id); // Fetching customer by ID
     }
-
     // Update customer
-    public void updateCustomer(Customer customer) {
-        logger.info("Updating customer with ID: {}", customer.getId());
-        customerRepository.save(customer); // Updating the customer in the repository
+    public Customer updateCustomer(Long id, Customer updatedCustomer) {
+        logger.info("Updating customer with ID: {}", id);
+        Optional<Customer> existingCustomerOpt = customerRepository.findById(id);
+
+        if (existingCustomerOpt.isPresent()) {
+            Customer existingCustomer = existingCustomerOpt.get();
+
+            // Actualiza los campos del cliente existente
+            existingCustomer.setName(updatedCustomer.getName());
+            existingCustomer.setLastName(updatedCustomer.getLastName());
+            existingCustomer.setBirthDate(updatedCustomer.getBirthDate());
+            existingCustomer.setEmail(updatedCustomer.getEmail());
+            existingCustomer.setPhone(updatedCustomer.getPhone());
+            existingCustomer.setIdentificationNumber(updatedCustomer.getIdentificationNumber());
+
+            // Guarda y retorna el cliente actualizado
+            return customerRepository.save(existingCustomer);
+        } else {
+            throw new CustomerNotFoundException("Customer not found with ID: " + id);
+        }
     }
+
+
+
+
+
+
 
     // Delete customer
     public void deleteCustomer(Long id) {
@@ -58,9 +81,9 @@ public class CustomerService {
     }
 
     // Fetch customers by first name containing a specific string
-    public List<Customer> getCustomersByFirstNameContaining(String firstName) {
-        logger.info("Fetching customers with first name containing: {}", firstName);
-        return customerRepository.findByFirstNameContaining(firstName);
+    public List<Customer> getCustomersByFirstNameContaining(String name) {
+        logger.info("Fetching customers with first name containing: {}", name);
+        return customerRepository.findByNameContaining(name);
     }
 
     // Fetch all customers

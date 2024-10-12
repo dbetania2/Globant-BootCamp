@@ -18,7 +18,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByLastName(String lastName);
 
     // Find all customers whose first name contains a specific string
-    List<Customer> findByFirstNameContaining(String firstName);
+    List<Customer> findByNameContaining(String name);
 
     // Find all customers (for example, to fetch all customers)
     List<Customer> findAll(); // This method is inherited from JpaRepository

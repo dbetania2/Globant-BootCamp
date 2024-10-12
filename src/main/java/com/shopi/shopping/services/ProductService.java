@@ -63,8 +63,7 @@ public class ProductService {
     }
 
     // Method to get products by category
-    public List<Product> getProductsByCategory(String category) {
-        logger.info("Fetching products with category: {}", category);
-        return productRepository.findByCategory(category); // Fetching products by category
+    public List<Product> getProductsByType(Class<?> type) {
+        return productRepository.findByProductType(type);
     }
 }
