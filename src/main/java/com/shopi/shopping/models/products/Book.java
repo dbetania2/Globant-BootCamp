@@ -1,12 +1,11 @@
 package com.shopi.shopping.models.products;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "books")  // Maps this class to the "books" table in the database
+@DiscriminatorValue("BOOK")  // Specifies the discriminator value for this subclass
 public class Book extends Product {
 
     // Constructor to initialize the book product
