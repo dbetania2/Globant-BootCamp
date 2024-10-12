@@ -6,6 +6,7 @@ out/
 .idea/
 logs/
 *.log
+src/main/resources/application.properties
 
 ### Eclipse ###
 .apt_generated
