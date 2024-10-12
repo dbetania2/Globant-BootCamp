@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DiscountService {
@@ -120,5 +121,33 @@ public class DiscountService {
         logger.info("No discount applied to product ID {}: Price remains unchanged: ${}", product.getId(), product.getPrice());
         return product.getPrice(); // No discount applied, so the price remains unchanged
     }
+
+    //----------------------------
+    // Create a discount
+    public Discount createDiscount(Discount discount) {
+        return discountRepository.save(discount);
+    }
+
+    // Update a discount
+    public Discount updateDiscount(Discount discount) {
+        return discountRepository.save(discount);
+    }
+
+    // Delete a discount by ID
+    public void deleteDiscount(Long id) {
+        discountRepository.deleteById(id);
+    }
+
+    // Get all active discounts
+    public List<Discount> findActiveDiscounts() {
+        return discountRepository.findByEndDateAfter(LocalDate.now());
+    }
+
+    // Get a discount by ID
+    public Optional<Discount> getDiscountDetails(Long id) {
+        return discountRepository.findById(id);
+    }
+
+
 
 }
