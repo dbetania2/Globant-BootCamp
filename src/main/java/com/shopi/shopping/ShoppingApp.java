@@ -8,7 +8,6 @@ import java.time.LocalDate;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.shopi.shopping.repositories")
 public class ShoppingApp {
-
     public static void main(String[] args) {
         SpringApplication.run(ShoppingApp.class, args);
     }

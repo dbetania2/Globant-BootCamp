@@ -8,7 +8,6 @@ CREATE TABLE customers (
     phone VARCHAR(50),                       -- Customer's phone number
     identification_number VARCHAR(100) UNIQUE -- Customer's identification number, must be unique
 );
-
 -- Create table for products
 CREATE TABLE products (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,    -- Auto-incremented primary key for products
