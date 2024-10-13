@@ -34,27 +34,24 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    //------
     @Operation(summary = "Create a new customer", description = "Adds a new customer to the system.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Customer created successfully."),
             @ApiResponse(responseCode = "400", description = "Invalid input.")
     })
-    //------
-    @PostMapping
+    @PostMapping //------"Create a Customer"-------
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
         Customer createdCustomer = customerService.createCustomer(customer);
         return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
     }
 
-    //------
+
     @Operation(summary = "Update an existing customer", description = "Updates the details of an existing customer.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer updated successfully."),
             @ApiResponse(responseCode = "404", description = "Customer not found.")
     })
-    //------
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //---------"Update a Customer"------
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody Customer updatedCustomer) {
         Customer updated = customerService.updateCustomer(id, updatedCustomer);
         if (updated != null) {
@@ -64,36 +61,30 @@ public class CustomerController {
         }
     }
 
-    //------
     @Operation(summary = "Delete a customer", description = "Removes a customer from the system by ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Customer deleted successfully."),
             @ApiResponse(responseCode = "404", description = "Customer not found.")
     })
-    //------
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //--------"Delete a Customer"-------
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Return 204 No Content
     }
 
-    //------
     @Operation(summary = "Fetch all customers", description = "Retrieves a list of all customers.")
     @ApiResponse(responseCode = "200", description = "List of customers retrieved successfully.")
-    //------
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {
         List<Customer> customers = customerService.getAllCustomers();
         return new ResponseEntity<>(customers, HttpStatus.OK); // Return 200 OK
     }
 
-    //------
     @Operation(summary = "Fetch a customer by ID", description = "Retrieves a specific customer by their ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer retrieved successfully."),
             @ApiResponse(responseCode = "404", description = "Customer not found.")
     })
-    //------
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
         Optional<Customer> customerOpt = customerService.getCustomerById(id);

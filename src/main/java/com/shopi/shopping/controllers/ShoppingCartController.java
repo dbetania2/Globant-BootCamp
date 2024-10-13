@@ -35,7 +35,7 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "400", description = "Invalid cart data.")
     })
     //------
-    @PostMapping
+    @PostMapping //---------"Create a Cart"------------
     public ResponseEntity<ShoppingCart> createOrUpdateCart(@RequestBody ShoppingCart cart) {
         ShoppingCart savedCart = shoppingCartRepository.save(cart);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCart);
@@ -119,7 +119,7 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "409", description = "Product already exists in the shopping cart.")
     })
     //------
-    @PostMapping("/{cartId}/products/{productId}")
+    @PostMapping("/{cartId}/products/{productId}") //---------"Add Product to a given Cart"-------------
     public ResponseEntity<ShoppingCart> addProductToCart(@PathVariable Long cartId, @PathVariable Long productId) {
         // Retrieve the cart
         Optional<ShoppingCart> optionalCart = shoppingCartRepository.findById(cartId);

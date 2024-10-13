@@ -32,7 +32,7 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
     //------
-    @GetMapping
+    @GetMapping //---------"Find all products given a cart identifier"---------
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
@@ -44,7 +44,7 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "Product not found.")
     })
     //------
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") //---------"Find a product given unique identifier"----------
     public ResponseEntity<Product> getProductById(@PathVariable long id) {
         Product product = productService.getProductById(id);
         return (product != null) ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
@@ -57,7 +57,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Invalid product details.")
     })
     //------
-    @PostMapping
+    @PostMapping //---------"Create a product"------
     public ResponseEntity<Product> createProduct(
             @RequestParam String category,
             @RequestParam String name,
@@ -74,7 +74,7 @@ public class ProductController {
             @ApiResponse(responseCode = "400", description = "Invalid product details.")
     })
     //------
-    @PutMapping("/{id}")
+    @PutMapping("/{id}") //---------"Update a product"------
     public ResponseEntity<Product> updateProduct(
             @PathVariable long id,
             @RequestParam BigDecimal price,
@@ -98,7 +98,7 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "Product not found.")
     })
     //------
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")  //---------"Delete a Product"------
     public ResponseEntity<Void> deleteProduct(@PathVariable long id) {
         if (productService.getProductById(id) == null) {
             return ResponseEntity.notFound().build();
