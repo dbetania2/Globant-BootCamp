@@ -23,14 +23,14 @@ public class ShoppingFacade {
     }
 
     // Handles the checkout process for completing the purchase
-    public void checkout() {
+    /*public void checkout() {
         if (shoppingCart.getProducts().isEmpty()) {
             System.out.println("Cart is empty, cannot proceed with checkout.");
         } else {
             System.out.println("Processing checkout for " + customer.getName());
             shoppingCartService.buyProducts(shoppingCart);  // Delegates the checkout process to the service
         }
-    }
+    }*/
 
     // Displays the details of the products in the shopping cart by calling the service method
     public void viewCartDetails() {
