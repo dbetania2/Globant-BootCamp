@@ -12,6 +12,8 @@ import com.shopi.shopping.repositories.ShoppingCartRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -222,35 +224,44 @@ public class ShoppingCartServices implements ShoppingCartInterface {
         }
     }
 
-    // Method to get a shopping cart by ID
+
+    // Public method without cache------
     public Optional<ShoppingCart> getCartById(Long id) {
         logger.info("Fetching cart with ID: {}", id);
         return shoppingCartRepository.findById(id);
     }
 
-    // Method to get all shopping carts
-    public List<ShoppingCart> getAllCarts() {
-        logger.info("Fetching all shopping carts.");
-        return shoppingCartRepository.findAll();
+    // Public method with cache------
+    @Cacheable(value = "shoppingCarts", key = "#id")
+    public Optional<ShoppingCart> getCartByIdWithCache(Long id) {
+        return getCartById(id);
     }
 
-    // Method to delete a shopping cart by ID
+    // Public method without cache------
     public void deleteCartById(Long id) {
         logger.info("Deleting cart with ID: {}", id);
         shoppingCartRepository.deleteById(id);
     }
 
-    // Method to get all carts for a specific customer
-    public List<ShoppingCart> getCartsByCustomerId(Long customerId) {
-        logger.info("Fetching carts for customer ID: {}", customerId);
-        return shoppingCartRepository.findByCustomerId(customerId);
+    // Public method with cache------
+    @CacheEvict(value = "shoppingCarts", key = "#id")
+    public void deleteCartByIdWithCache(Long id) {
+        deleteCartById(id); // Llamar al método sin caché
     }
 
-    // Method to get all carts with a specific status
+    // Public method without cache------
     public List<ShoppingCart> getCartsByStatus(ShoppingCart.Status status) {
         logger.info("Fetching carts with status: {}", status);
         return shoppingCartRepository.findByStatus(status);
     }
+
+    // Public method with cache------
+    @Cacheable(value = "shoppingCartsByStatus", key = "#status")
+    public List<ShoppingCart> getCartsByStatusWithCache(ShoppingCart.Status status) {
+        return shoppingCartRepository.findByStatus(status);
+    }
+
+
 
     @Override
     public void buyProducts(ShoppingCart cart) {
@@ -259,6 +270,19 @@ public class ShoppingCartServices implements ShoppingCartInterface {
             return;
         }
         logger.info("Buying products in cart ID: {}", cart.getId());
-        // Add your business logic for buying products here
+
     }
+
+    // Method to get all shopping carts
+    public List<ShoppingCart> getAllCarts() {
+        logger.info("Fetching all shopping carts.");
+        return shoppingCartRepository.findAll();
+    }
+    // Method to get all carts for a specific customer
+    public List<ShoppingCart> getCartsByCustomerId(Long customerId) {
+        logger.info("Fetching carts for customer ID: {}", customerId);
+        return shoppingCartRepository.findByCustomerId(customerId);
+    }
+
+
 }
