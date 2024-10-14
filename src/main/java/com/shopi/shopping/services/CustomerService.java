@@ -1,9 +1,11 @@
 package com.shopi.shopping.services;
 import com.shopi.shopping.exceptions.exceptionCustomer.CustomerNotFoundException;
 import com.shopi.shopping.models.Customer;
+import com.shopi.shopping.models.Event;
 import com.shopi.shopping.repositories.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +17,15 @@ public class CustomerService {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
     private final CustomerRepository customerRepository;
+    private final AmqpTemplate amqpTemplate;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    private NotificationService notificationService; // Inyecta el NotificationService
+
+    @Autowired
+    public CustomerService(CustomerRepository customerRepository, AmqpTemplate amqpTemplate) {
         this.customerRepository = customerRepository;
+        this.amqpTemplate = amqpTemplate;
     }
 
     // Create a new customer
@@ -91,4 +98,20 @@ public class CustomerService {
         logger.info("Fetching all customers");
         return customerRepository.findAll(); // Fetching all customers
     }
+
+
+
+    public void handleCustomerBirthday(Long customerId) {
+        // Create a birthday event
+        Event birthdayEvent = new Event(customerId, "BIRTHDAY");
+        notificationService.notify(birthdayEvent); // Call the notify method of NotificationService
+    }
+
+    public void notify(Event eventCart) {
+        // Logic to send a message to RabbitMQ
+        amqpTemplate.convertAndSend("notificationExchange", "notify", eventCart);
+    }
+
+
+
 }
