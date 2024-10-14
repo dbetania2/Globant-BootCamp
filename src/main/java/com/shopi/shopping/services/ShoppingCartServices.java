@@ -1,20 +1,23 @@
 package com.shopi.shopping.services;
 import com.shopi.shopping.factories.OrderFactory;
-import com.shopi.shopping.models.Order;
+import com.shopi.shopping.models.*;
 import com.shopi.shopping.interfaces.ShoppingCartInterface;
 import com.shopi.shopping.models.products.Product;
-import com.shopi.shopping.models.ShoppingCart;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import com.shopi.shopping.repositories.ShoppingCartRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @Service
 public class ShoppingCartServices implements ShoppingCartInterface {
@@ -23,16 +26,59 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     private final ShoppingCartRepository shoppingCartRepository;
     private final OrderFactory orderFactory;
     private final DiscountService discountService;
+    private final OrderService orderService;
+    private final NotificationService notificationService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;//--
+    private final AmqpTemplate amqpTemplate;
 
     @Autowired
     public ShoppingCartServices(ShoppingCartRepository shoppingCartRepository,
                                 OrderFactory orderFactory,
-                                DiscountService discountService) {
+                                DiscountService discountService,
+                                OrderService orderService, NotificationService notificationService, RabbitTemplate rabbitTemplate, AmqpTemplate amqpTemplate) {
         this.shoppingCartRepository = shoppingCartRepository;
         this.orderFactory = orderFactory;
         this.discountService = discountService;
-        logger.info("ShoppingCartServices initialized with ShoppingCartRepository, OrderFactory, and DiscountService.");
+        this.orderService = orderService;
+        this.notificationService = notificationService;
+        this.rabbitTemplate = rabbitTemplate;
+        this.amqpTemplate = amqpTemplate;
+        logger.info("ShoppingCartServices initialized with ShoppingCartRepository, OrderFactory, DiscountService, and OrderService.");
     }
+    @Override
+    public void buyProducts(ShoppingCart cart) {
+        // Input validation
+        if (cart == null || cart.getProducts() == null || cart.getProducts().isEmpty()) {
+            logger.warn("Cannot buy products: Cart is null or empty.");
+            return;
+        }
+
+        logger.info("Buying products in cart ID: {}", cart.getId());
+
+        // Create the StandardOrder and save it
+        StandardOrder order = new StandardOrder(new ArrayList<>(cart.getProducts())); // Ensure you get a copy of the list
+
+        try {
+            // Save the order
+            orderService.saveOrder(order);
+
+            // Change cart status to SUBMITTED
+            cart.setStatus(ShoppingCart.Status.SUBMIT);
+            shoppingCartRepository.save(cart); // Save the updated cart
+
+            // Send event to RabbitMQ
+            Event event = new Event(cart.getId(), "SUBMITTED");
+            notificationService.notify(event); // Call the notify method in NotificationService
+
+            logger.info("Notification sent for cart ID: {}", cart.getId());
+
+        } catch (Exception e) {
+            logger.error("Error occurred while processing the order for cart ID: {}. Error: {}", cart.getId(), e.getMessage());
+        }
+    }
+
 
     // Checkout process to create an order and apply discounts if necessary
     public Order checkout(ShoppingCart cart, boolean isFirstPurchase) {
@@ -261,17 +307,6 @@ public class ShoppingCartServices implements ShoppingCartInterface {
         return shoppingCartRepository.findByStatus(status);
     }
 
-
-
-    @Override
-    public void buyProducts(ShoppingCart cart) {
-        if (cart == null || cart.getProducts().isEmpty()) {
-            logger.warn("Cannot buy products: Cart is null or empty.");
-            return;
-        }
-        logger.info("Buying products in cart ID: {}", cart.getId());
-
-    }
 
     // Method to get all shopping carts
     public List<ShoppingCart> getAllCarts() {
