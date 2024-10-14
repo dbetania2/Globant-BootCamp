@@ -80,16 +80,26 @@ public class ProductController {
             @RequestParam BigDecimal price,
             @RequestParam String name,
             @RequestParam String description) {
+
+        // Fetch the existing product
         Product existingProduct = productService.getProductById(id);
+
+        // Check if the product exists
         if (existingProduct == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); // Return 404 if the product does not exist
         }
+
+        // Update the product details
         existingProduct.setPrice(price);
         existingProduct.setName(name);
         existingProduct.setDescription(description);
+
+        // Update the product in the service
         productService.updateProduct(existingProduct);
-        return ResponseEntity.ok(existingProduct);
+
+        return ResponseEntity.ok(existingProduct); // Return the updated product
     }
+
 
     //------
     @Operation(summary = "Delete a product by ID", description = "Deletes a specific product by its ID.")
@@ -100,10 +110,11 @@ public class ProductController {
     //------
     @DeleteMapping("/{id}")  //---------"Delete a Product"------
     public ResponseEntity<Void> deleteProduct(@PathVariable long id) {
-        if (productService.getProductById(id) == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            productService.deleteProductWithCache(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
     }
 }
