@@ -19,6 +19,8 @@ public class Electronic extends Product {
         super(price, name, description);
     }
 
+
+
     @Override
     public String getType() {
         return "ELECTRONIC";  // Returns the type of product
