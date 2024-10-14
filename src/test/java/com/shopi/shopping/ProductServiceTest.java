@@ -1,14 +1,9 @@
 package com.shopi.shopping;
-
 import com.shopi.shopping.factories.ProductFactory;
-import com.shopi.shopping.models.products.Book;
-import com.shopi.shopping.models.products.Clothing;
 import com.shopi.shopping.models.products.Electronic;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.repositories.ProductRepository;
 import com.shopi.shopping.services.ProductService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
