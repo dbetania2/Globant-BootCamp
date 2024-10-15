@@ -69,8 +69,9 @@ public class ShoppingCartServices implements ShoppingCartInterface {
             cart.setStatus(ShoppingCart.Status.SUBMIT);
             shoppingCartRepository.save(cart); // Guardar el carrito actualizado
 
-            // Crear el evento
-            Event event = new Event(cart.getId(), "SUBMITTED"); // Aquí puedes cambiar el tipo de evento
+            // Crear el evento con tipo y mensaje
+            String message = "The cart has been submitted successfully."; // Mensaje adicional
+            Event event = new Event("SUBMITTED", message); // Se pasa solo el tipo y el mensaje
 
             // Notificar el evento
             notificationService.notify(event); // Llamar al método notify para manejar la notificación a RabbitMQ
@@ -81,6 +82,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
             logger.error("Error occurred while processing the order for cart ID: {}. Error: {}", cart.getId(), e.getMessage());
         }
     }
+
 
 
 
