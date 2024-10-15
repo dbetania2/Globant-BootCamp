@@ -28,7 +28,7 @@ public class NotificationService {
     }
 
     // Method that receives notifications from RabbitMQ and directly handles the event
-    @RabbitListener(queues = "notifications")
+    @RabbitListener(queues = RabbitConfig.NOTIFICATION_QUEUE) // Use the configured queue
     public void getNotifications(Event event) {
         System.out.println("Received event: " + event);
 
@@ -39,7 +39,7 @@ public class NotificationService {
             message = "Happy Birthday! We wish you a wonderful day!";
             System.out.println("Sending SMS: " + message);  // Simulating sending an SMS
         } else if ("SUBMITTED".equals(event.getEventType())) {
-            message = "The cart with ID " + event.getCartId() + " has been submitted. Thank you for your purchase!";
+            message = event.getMessage();  // Use the message from the event
             System.out.println("Sending Email: " + message);  // Simulating sending an email
         } else {
             message = "Notification for event: " + event.getEventType();
