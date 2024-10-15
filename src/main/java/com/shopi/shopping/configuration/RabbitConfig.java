@@ -7,7 +7,7 @@ public class RabbitConfig {
 
     public static final String NOTIFICATION_QUEUE = "notifications"; // Name of the queue
     public static final String NOTIFICATION_EXCHANGE = "notificationExchange"; // Name of the exchange
-    public static final String ROUTING_KEY = "cart.status.*"; // Routing key pattern for binding
+    public static final String ROUTING_KEY = "notifications.#"; // Routing key pattern for binding
 
     // Bean definition for the notification queue
     @Bean
