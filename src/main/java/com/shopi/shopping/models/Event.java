@@ -2,26 +2,38 @@ package com.shopi.shopping.models;
 
 import java.io.Serializable;
 
-public class Event implements Serializable {
-    private Long id; // Cart ID
-    private String eventType; // Event type (e.g., "SUBMITTED", "CANCELLED")
-    private long timestamp; // Event timestamp
+public class Event  implements Serializable{
+    private String eventType; // Tipo de evento
+    private String message;   // Mensaje adicional
 
-    public Event(Long cartId, String eventType) {
-        this.id = cartId;
-        this.eventType = eventType;
-        this.timestamp = System.currentTimeMillis(); // Current timestamp
+    // Constructor
+    public Event(String eventType, String message) {
+        this.eventType = eventType; // Tipo de evento
+        this.message = message; // Mensaje adicional
     }
 
-    public Long getCartId() {
-        return id;
-    }
-
+    // Getters y setters
     public String getEventType() {
         return eventType;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "eventType='" + eventType + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }
