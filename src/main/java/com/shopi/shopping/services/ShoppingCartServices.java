@@ -1,4 +1,5 @@
 package com.shopi.shopping.services;
+import com.shopi.shopping.configuration.RabbitConfig;
 import com.shopi.shopping.factories.OrderFactory;
 import com.shopi.shopping.models.*;
 import com.shopi.shopping.interfaces.ShoppingCartInterface;
@@ -49,7 +50,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
     }
     @Override
     public void buyProducts(ShoppingCart cart) {
-        // Input validation
+        // Validación de entrada
         if (cart == null || cart.getProducts() == null || cart.getProducts().isEmpty()) {
             logger.warn("Cannot buy products: Cart is null or empty.");
             return;
@@ -57,20 +58,22 @@ public class ShoppingCartServices implements ShoppingCartInterface {
 
         logger.info("Buying products in cart ID: {}", cart.getId());
 
-        // Create the StandardOrder and save it
-        StandardOrder order = new StandardOrder(new ArrayList<>(cart.getProducts())); // Ensure you get a copy of the list
+        // Crear el StandardOrder y guardarlo
+        StandardOrder order = new StandardOrder(new ArrayList<>(cart.getProducts())); // Asegurarse de obtener una copia de la lista
 
         try {
-            // Save the order
+            // Guardar la orden
             orderService.saveOrder(order);
 
-            // Change cart status to SUBMITTED
+            // Cambiar el estado del carrito a SUBMITTED
             cart.setStatus(ShoppingCart.Status.SUBMIT);
-            shoppingCartRepository.save(cart); // Save the updated cart
+            shoppingCartRepository.save(cart); // Guardar el carrito actualizado
 
-            // Send event to RabbitMQ
-            Event event = new Event(cart.getId(), "SUBMITTED");
-            notificationService.notify(event); // Call the notify method in NotificationService
+            // Crear el evento
+            Event event = new Event(cart.getId(), "SUBMITTED"); // Aquí puedes cambiar el tipo de evento
+
+            // Notificar el evento
+            notificationService.notify(event); // Llamar al método notify para manejar la notificación a RabbitMQ
 
             logger.info("Notification sent for cart ID: {}", cart.getId());
 
@@ -78,6 +81,9 @@ public class ShoppingCartServices implements ShoppingCartInterface {
             logger.error("Error occurred while processing the order for cart ID: {}. Error: {}", cart.getId(), e.getMessage());
         }
     }
+
+
+
 
 
     // Checkout process to create an order and apply discounts if necessary
