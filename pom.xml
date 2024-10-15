@@ -12,9 +12,10 @@
 
   <groupId>com.shopi.shopping</groupId>
   <artifactId>ShopiShopping</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>ShopiShopping</name>
   <description>A shopping application</description>
+  <packaging>jar</packaging>
 
   <properties>
     <java.version>17</java.version>
