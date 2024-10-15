@@ -15,6 +15,11 @@ public class NotificationController {
     // Method to send a notification to RabbitMQ
     @PostMapping("/sendNotification")
     public ResponseEntity<String> sendNotification(@RequestBody Event event) {
+        // Validate the incoming event
+        if (event.getEventType() == null || event.getMessage() == null) {
+            return ResponseEntity.badRequest().body("Event type and message cannot be null.");
+        }
+
         notificationService.notify(event);  // Sends the event to RabbitMQ
         return ResponseEntity.ok("Notification sent successfully!");
     }
@@ -25,4 +30,5 @@ public class NotificationController {
         // This method could return a message indicating that notifications are being listened for
         return ResponseEntity.ok("Listening for notifications from RabbitMQ.");
     }
+
 }
