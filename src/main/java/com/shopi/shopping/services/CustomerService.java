@@ -40,6 +40,7 @@ public class CustomerService {
         logger.info("Fetching customer with ID: {}", id);
         return customerRepository.findById(id); // Fetching customer by ID
     }
+
     // Update customer
     public Customer updateCustomer(Long id, Customer updatedCustomer) {
         logger.info("Updating customer with ID: {}", id);
@@ -62,8 +63,6 @@ public class CustomerService {
             throw new CustomerNotFoundException("Customer not found with ID: " + id);
         }
     }
-
-
 
 
 
@@ -100,16 +99,10 @@ public class CustomerService {
     }
 
 
-
     public void handleCustomerBirthday(Long customerId) {
         // Create a birthday event
         Event birthdayEvent = new Event(customerId, "BIRTHDAY");
         notificationService.notify(birthdayEvent); // Call the notify method of NotificationService
-    }
-
-    public void notify(Event eventCart) {
-        // Logic to send a message to RabbitMQ
-        amqpTemplate.convertAndSend("notificationExchange", "notify", eventCart);
     }
 
 
