@@ -99,11 +99,11 @@ public class CustomerService {
     }
 
 
-    /*public void handleCustomerBirthday(Long customerId) {
+    public void handleCustomerBirthday(Long customerId) {
         // Create a birthday event
-        Event birthdayEvent = new Event(customerId, "BIRTHDAY");
+        Event birthdayEvent = new Event("BIRTHDAY","happy BIRTHDAY" );
         notificationService.notify(birthdayEvent); // Call the notify method of NotificationService
-    }*/
+    }
 
 
 
