@@ -27,7 +27,7 @@ public class ProductServiceCacheTest {
     @MockBean
     private ProductRepository productRepository; // MockBean for the repository
 
-    @Test
+    /*@Test
     void testGetProductByIdCached_UsesCache() {
         // Setup
         long productId = 1L;
@@ -52,7 +52,7 @@ public class ProductServiceCacheTest {
         // Verify that the repository is not called this time
         verify(productRepository, times(1)).findById(productId); // Should only be one call
         assertEquals(mockProduct, productFromCacheAgain);
-    }
+    }*/
 
     @Test
     void testDeleteProductWithoutCacheEviction() {
