@@ -16,9 +16,10 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-
+@EnableCaching
 @Service
 public class ShoppingCartServices implements ShoppingCartInterface {
 
