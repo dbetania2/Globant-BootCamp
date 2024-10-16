@@ -1,15 +1,18 @@
 package com.shopi.shopping.testCache;
-import com.shopi.shopping.factories.ProductFactory;
 import com.shopi.shopping.models.products.Electronic;
 import com.shopi.shopping.models.products.Book;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.repositories.ProductRepository;
 import com.shopi.shopping.services.ProductService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+
 import java.math.BigDecimal;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,8 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
+@EnableCaching
 public class ProductServiceCacheTest {
 
     @Autowired
@@ -27,32 +32,34 @@ public class ProductServiceCacheTest {
     @MockBean
     private ProductRepository productRepository; // MockBean for the repository
 
-    /*@Test
-    void testGetProductByIdCached_UsesCache() {
-        // Setup
+    @Autowired
+    private CacheManager cacheManager; // Autowired to access the cache manager
+
+    @AfterEach
+    public void clearCache() {
+        // Limpia el caché después de cada prueba
+        cacheManager.getCache("products").clear();
+    }
+
+    @Test
+    public void testGetProductByIdCached() {
+        // Given
         long productId = 1L;
+        Book book = new Book(new BigDecimal("19.99"), "Test Book", "A test book description");
+        when(productRepository.findById(productId)).thenReturn(Optional.of(book)); // Mock repository
 
-        // Create a product of type Electronic and set its ID
-        Electronic mockProduct = new Electronic(BigDecimal.valueOf(10.00), "Test Electronic Product", "A description for the test product.");
-        mockProduct.setId(productId); // Ensure that the ID matches
+        // When - First call should hit the repository
+        Product result1 = productService.getProductByIdCached(productId);
+        verify(productRepository, times(1)).findById(productId); // Verify repository is called once
 
-        // Simulate that the product is not in cache and is fetched from the repository
-        when(productRepository.findById(productId)).thenReturn(Optional.of(mockProduct));
+        // When - Second call should come from cache, repository shouldn't be called
+        Product result2 = productService.getProductByIdCached(productId);
+        verify(productRepository, times(1)).findById(productId); // Ensure repository is not called again
 
-        // Call the method - First call, should access the repository
-        Product productFromCache = productService.getProductByIdCached(productId);
-
-        // Verify that the product was obtained from the repository
-        assertNotNull(productFromCache);
-        assertEquals(mockProduct, productFromCache);
-
-        // Call the method - Second call, should use cache
-        Product productFromCacheAgain = productService.getProductByIdCached(productId);
-
-        // Verify that the repository is not called this time
-        verify(productRepository, times(1)).findById(productId); // Should only be one call
-        assertEquals(mockProduct, productFromCacheAgain);
-    }*/
+        // Then - Assert the result
+        assertEquals(book, result1);
+        assertEquals(book, result2);
+    }
 
     @Test
     void testDeleteProductWithoutCacheEviction() {
@@ -101,8 +108,7 @@ public class ProductServiceCacheTest {
         // Verify that the save method was called exactly once
         verify(productRepository, times(1)).save(mockProduct);
 
-        // Verify that the cache was not evicted (this can be done by ensuring the cache method was not called)
-        // In this case, just ensure that your method logic does not trigger cache eviction.
+        // Verify that the cache was not evicted
     }
 
     @Test
