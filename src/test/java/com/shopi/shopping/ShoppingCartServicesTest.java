@@ -10,6 +10,7 @@ import com.shopi.shopping.models.products.Book;
 import com.shopi.shopping.models.products.Electronic;
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.services.DiscountService;
+import com.shopi.shopping.services.OrderService;
 import com.shopi.shopping.services.ShoppingCartServices;
 import com.shopi.shopping.repositories.ShoppingCartRepository;
 import jakarta.persistence.EntityManager;
@@ -46,6 +47,9 @@ public class ShoppingCartServicesTest {
 
     @Mock
     private ProductFactory productFactory; // Mock for the product factory
+    @Mock
+    private OrderService orderService; // Mock for the order service
+
 
     private ShoppingCart cart; // Instance of ShoppingCart for tests
     private Product book; // Declare as class variable
@@ -77,6 +81,41 @@ public class ShoppingCartServicesTest {
         shoppingCartServices.addProductToCart(cart, book);
         shoppingCartServices.addProductToCart(cart, phone);
     }
+    @Test
+    public void testBuyProducts_Success() {
+        // Arrange
+        Product book = new Book(BigDecimal.valueOf(50.0), "A novel", "Default description");
+        Product phone = new Electronic(BigDecimal.valueOf(300.0), "Smartphone", "Default description");
+
+        // Add products to the cart using the addProductToCart method from the service
+        shoppingCartServices.addProductToCart(cart, book);
+        shoppingCartServices.addProductToCart(cart, phone);
+
+        // Set up the behavior of the mocks
+        when(orderService.saveOrder(any(StandardOrder.class))).thenReturn(new StandardOrder(Arrays.asList(book, phone))); // Simulate saving the order
+        when(shoppingCartRepository.save(any(ShoppingCart.class))).thenReturn(cart); // Mock to save the cart
+
+        // Act
+        shoppingCartServices.buyProducts(cart); // Call the method to test
+
+        // Assert
+        verify(orderService, times(1)).saveOrder(any(StandardOrder.class)); // Verify that the order was saved
+        verify(shoppingCartRepository, times(1)).save(cart); // Verify that the cart was saved
+        assertEquals(ShoppingCart.Status.SUBMIT, cart.getStatus()); // Check the status of the cart
+    }
+
+
+    @Test
+    public void testBuyProducts_CartNull() {
+        // Act
+        shoppingCartServices.buyProducts(null); // Call the method with null
+
+        // Assert
+        verify(orderFactory, never()).createOrder(any()); // Ensure createOrder is never called
+        verify(orderService, never()).saveOrder(any()); // Ensure saveOrder is never called
+        verify(shoppingCartRepository, never()).save(any()); // Ensure cart is not saved
+    }
+
 
     //------ Checkout tests ---------------------------- - -- --
     @Test
@@ -247,12 +286,6 @@ public class ShoppingCartServicesTest {
         assertTrue(output.contains("A novel"), "Output should include product description");
         assertTrue(output.contains("Smartphone"), "Output should include product description");
     }
-
-   /* @Test
-    public void testBuyProducts() {
-        // Execute the buyProducts method and verify that it does not throw exceptions
-        assertDoesNotThrow(() -> shoppingCartServices.buyProducts(cart));
-    }*/
 
     @Test
     public void testRemoveProductFromCart() {
