@@ -144,4 +144,23 @@ public class ShoppingCartController {
         shoppingCartRepository.save(cart);
         return ResponseEntity.ok(cart); // Return the updated cart
     }
+
+    @Operation(summary = "Buy products in a shopping cart", description = "Submits the shopping cart for purchase.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Products bought successfully."),
+            @ApiResponse(responseCode = "404", description = "Shopping cart not found."),
+            @ApiResponse(responseCode = "400", description = "Invalid cart or cart is empty.")
+    })
+    @PostMapping("/{cartId}/buy")
+    public ResponseEntity<Void> buyProducts(@PathVariable Long cartId) {
+        Optional<ShoppingCart> optionalCart = shoppingCartRepository.findById(cartId);
+        if (!optionalCart.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        ShoppingCart cart = optionalCart.get();
+        shoppingCartService.buyProducts(cart);
+        return ResponseEntity.ok().build();
+    }
+
 }

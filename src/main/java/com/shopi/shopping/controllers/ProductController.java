@@ -1,4 +1,6 @@
 package com.shopi.shopping.controllers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.services.ProductService;
@@ -19,6 +21,8 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
+
 
     @Autowired
     public ProductController(ProductService productService) {
@@ -29,13 +33,25 @@ public class ProductController {
     @Operation(summary = "Get all products", description = "Fetches a list of all available products.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Products retrieved successfully."),
-            @ApiResponse(responseCode = "500", description = "Internal server error.")
+            @ApiResponse(responseCode = "500", description = "Internal server error."),
+            @ApiResponse(responseCode = "204", description = "empty list.")
     })
     //------
-    @GetMapping //---------"Find all products given a cart identifier"---------
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    @GetMapping // Find all products
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        logger.info("Fetched products: " + products);
+
+        // Si la lista está vacía, devuelve un No Content (204)
+        if (products.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        // Devuelve la lista con un código 200 (OK)
+        return ResponseEntity.ok(products);
     }
+
+
 
     //------
     @Operation(summary = "Get a product by ID", description = "Fetches a specific product by its ID.")
