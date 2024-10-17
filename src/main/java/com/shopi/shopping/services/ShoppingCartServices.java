@@ -59,11 +59,21 @@ public class ShoppingCartServices implements ShoppingCartInterface {
 
         logger.info("Buying products in cart ID: {}", cart.getId());
 
-        // Crear el StandardOrder y guardarlo
-        StandardOrder order = new StandardOrder(new ArrayList<>(cart.getProducts())); // Asegurarse de obtener una copia de la lista
+        // Establecer directamente isFirstPurchase en true (lo cambiarás más adelante)
+        boolean isFirstPurchase = true;
+
+        // Llamar al método checkout para crear la orden y aplicar descuentos
+        Order order;
+        try {
+            order = checkout(cart, isFirstPurchase); // Crear orden y aplicar descuentos
+            logger.info("Order successfully created and discounts applied for cart ID: {}", cart.getId());
+        } catch (Exception e) {
+            logger.error("Error during checkout process for cart ID: {}. Error: {}", cart.getId(), e.getMessage());
+            return;
+        }
 
         try {
-            // Guardar la orden
+            // Guardar la orden usando orderService
             orderService.saveOrder(order);
 
             // Cambiar el estado del carrito a SUBMITTED
@@ -71,11 +81,11 @@ public class ShoppingCartServices implements ShoppingCartInterface {
             shoppingCartRepository.save(cart); // Guardar el carrito actualizado
 
             // Crear el evento con tipo y mensaje
-            String message = "The cart has been submitted successfully."; // Mensaje adicional
-            Event event = new Event("SUBMITTED", message); // Se pasa solo el tipo y el mensaje
+            String message = "The cart has been submitted successfully.";
+            Event event = new Event("SUBMITTED", message);
 
             // Notificar el evento
-            notificationService.notify(event); // Llamar al método notify para manejar la notificación a RabbitMQ
+            notificationService.notify(event); // Llamar al método notify para manejar la notificación
 
             logger.info("Notification sent for cart ID: {}", cart.getId());
 
@@ -83,6 +93,7 @@ public class ShoppingCartServices implements ShoppingCartInterface {
             logger.error("Error occurred while processing the order for cart ID: {}. Error: {}", cart.getId(), e.getMessage());
         }
     }
+
 
 
 
@@ -248,6 +259,12 @@ public class ShoppingCartServices implements ShoppingCartInterface {
             throw new IllegalArgumentException("Product cannot be null.");
         }
 
+        // Check if the cart exists (optional, if you have a way to confirm this)
+        if (!cartExists(cart.getId())) {
+            logger.error("Failed to add product: Cart with ID {} does not exist.", cart.getId());
+            throw new IllegalArgumentException("Cart does not exist.");
+        }
+
         // Check if the product is already in the cart
         if (cart.getProducts().contains(product)) {
             logger.warn("Product already exists in the cart: ID: {} - Name: {}", product.getId(), product.getName());
@@ -256,6 +273,8 @@ public class ShoppingCartServices implements ShoppingCartInterface {
 
         // Add the product to the cart
         boolean added = cart.getProducts().add(product);
+        // Save the updated cart to the database
+        shoppingCartRepository.save(cart);
         logger.info("Product added: {}", added);
         return added; // Indicates that the product was successfully added
     }
@@ -277,6 +296,10 @@ public class ShoppingCartServices implements ShoppingCartInterface {
         } else {
             logger.warn("Product not found in the cart: {}", product.getName());
         }
+    }
+    public boolean cartExists(Long id) {
+        logger.info("Checking existence of cart with ID: {}", id);
+        return shoppingCartRepository.existsById(id);
     }
 
 

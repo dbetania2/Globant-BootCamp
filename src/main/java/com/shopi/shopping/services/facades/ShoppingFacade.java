@@ -2,43 +2,69 @@ package com.shopi.shopping.services.facades;
 import com.shopi.shopping.models.Customer;
 import com.shopi.shopping.models.ShoppingCart;
 import com.shopi.shopping.models.products.Product;
+import com.shopi.shopping.services.NotificationService;
+import com.shopi.shopping.services.OrderService;
+import com.shopi.shopping.services.ProductService;
 import com.shopi.shopping.services.ShoppingCartServices;
+import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+@Service
 public class ShoppingFacade {
-    private Customer customer;  // Customer associated with the shopping session
-    private ShoppingCart shoppingCart;  // The customer's shopping cart
-    private ShoppingCartServices shoppingCartService;  // Service for handling cart operations
 
+    private final ShoppingCartServices shoppingCartService; // Servicio para operaciones del carrito
+    private final ProductService productService; // Servicio para operaciones con productos
+    private final OrderService orderService; // Servicio para operaciones de órdenes
+    private final NotificationService notificationService; // Servicio para notificaciones
 
-    // Constructor initializing the facade with a customer and shopping cart service
-    public ShoppingFacade(Customer customer, ShoppingCartServices shoppingCartService) {
-        this.customer = customer;
-        this.shoppingCart = new ShoppingCart(customer);  // Create a shopping cart for the customer
-        this.shoppingCartService = shoppingCartService;  // Assign the cart service
+    public ShoppingFacade(ShoppingCartServices shoppingCartService, ProductService productService,
+                              OrderService orderService, NotificationService notificationService) {
+        this.shoppingCartService = shoppingCartService;
+        this.productService = productService;
+        this.orderService = orderService;
+        this.notificationService = notificationService;
     }
 
-    // Adds a product to the cart by delegating to the service
-    public void addProductToCart(Product product) {
-        shoppingCartService.addProductToCart(shoppingCart, product);
-    }
-
-    // Handles the checkout process for completing the purchase
-    /*public void checkout() {
-        if (shoppingCart.getProducts().isEmpty()) {
-            System.out.println("Cart is empty, cannot proceed with checkout.");
-        } else {
-            System.out.println("Processing checkout for " + customer.getName());
-            shoppingCartService.buyProducts(shoppingCart);  // Delegates the checkout process to the service
+    // Ver productos en el carrito
+    public void viewCart(ShoppingCart cart) {
+        if (cart == null) {
+            System.out.println("El carrito es nulo. No se pueden ver los productos.");
+            return;
         }
-    }*/
-
-    // Displays the details of the products in the shopping cart by calling the service method
-    public void viewCartDetails() {
-        shoppingCartService.viewCartDetails(shoppingCart);  // Delegates the logic to the service
+        shoppingCartService.viewCart(cart);
     }
 
-    // Returns the shopping cart associated with this facade
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
+    // Ver detalles de los productos en el carrito
+    public void viewCartDetails(ShoppingCart cart) {
+        if (cart == null) {
+            System.out.println("El carrito es nulo. No se pueden ver los detalles de los productos.");
+            return;
+        }
+        shoppingCartService.viewCartDetails(cart);
     }
+
+    // Agregar producto al carrito
+    public boolean addProductToCart(ShoppingCart cart, Product product) {
+        return shoppingCartService.addProductToCart(cart, product);
+    }
+
+    // Remover producto del carrito
+    public void removeProductFromCart(ShoppingCart cart, Product product) {
+        shoppingCartService.removeProductFromCart(cart, product);
+    }
+
+    // Comprar productos
+    public void buyProducts(ShoppingCart cart) {
+        shoppingCartService.buyProducts(cart);
+    }
+
+    // Calcular el precio total de los productos en el carrito
+    public BigDecimal calculateTotalPrice(ShoppingCart cart) {
+        return shoppingCartService.calculateTotalPrice(cart);
+    }
+
+    // Obtiene el carrito actual (puedes implementar según tu lógica)
+
+
+
 }
