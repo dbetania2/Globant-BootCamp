@@ -1,11 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home Page</title>
+    <title>Shopping Cart</title>
+    <meta charset="UTF-8">
 </head>
 <body>
-<h1>Welcome to the Home Page!</h1>
-<p>This is your home after logging in.</p>
-<a href="/logout">Logout</a>
+
+<h1>Welcome to the Shop</h1>
+
+<!-- List of available products -->
+<h2>Available Products</h2>
+<ul>
+    <li th:each="product : ${products}">
+        <span th:text="${product.name}">Product Name</span> -
+        <span th:text="${product.price}">Product Price</span> USD
+        <form th:action="@{/cart/add}" method="post">
+            <input type="hidden" name="productId" th:value="${product.id}" />
+            <input type="hidden" name="cartId" th:value="${cartId}" />
+            <button type="submit">Add to Cart</button>
+        </form>
+    </li>
+</ul>
+
+<!-- Shopping cart -->
+<h2>Your Cart</h2>
+<ul th:if="${cartItems != null && !#lists.isEmpty(cartItems)}">
+    <li th:each="item : ${cartItems}">
+        <strong th:text="${item.name}">Product Name</strong> -
+        <span th:text="${item.price}">Product Price</span> USD
+        <form th:action="@{/cart/remove}" method="post">
+            <input type="hidden" name="productId" th:value="${item.id}" />
+            <input type="hidden" name="cartId" th:value="${cartId}" />
+            <button type="submit">Remove</button>
+        </form>
+    </li>
+</ul>
+
+<div th:if="${cartItems == null || #lists.isEmpty(cartItems)}">
+    <p>Your cart is empty.</p>
+</div>
+
+<!-- Checkout button -->
+<form th:action="@{/cart/buy}" method="post">
+    <input type="hidden" name="cartId" th:value="${cartId}" />
+    <!-- Checkout button (with hidden input for cartId) -->
+    <button id="checkout-button">Checkout</button>
+</form>
+
 </body>
 </html>
+
