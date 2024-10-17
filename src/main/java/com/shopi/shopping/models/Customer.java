@@ -8,6 +8,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,10 +20,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "customers")  // Maps the class to the "customers" table in the database
+
 public class Customer  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // The database will automatically generate the ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Name is required.")

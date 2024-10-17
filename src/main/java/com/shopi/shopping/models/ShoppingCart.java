@@ -18,7 +18,13 @@ public class ShoppingCart {
     @JoinColumn(name = "customer_id")  // Foreign key column in the shopping_carts table
     private Customer customer;
 
-    @ManyToMany(mappedBy = "shoppingCarts")
+    // Many ShoppingCarts can have Many Products
+    @ManyToMany
+    @JoinTable(
+            name = "shopping_cart_products",
+            joinColumns = @JoinColumn(name = "shopping_cart_id"), // Corregido para apuntar al ShoppingCart
+            inverseJoinColumns = @JoinColumn(name = "product_id") // Corregido para apuntar al Product
+    )
     private List<Product> products = new ArrayList<>();
 
 
@@ -29,7 +35,6 @@ public class ShoppingCart {
         DRAFT, SUBMIT
     }
 
-    private static final AtomicLong idCounter = new AtomicLong(0);
     public ShoppingCart() {
         this.products = new ArrayList<>();
     }
@@ -37,7 +42,7 @@ public class ShoppingCart {
     public ShoppingCart(Customer customer) {
         this.customer = customer;  // Assign customer to the cart
         this.status = Status.DRAFT;  // Default status is DRAFT
-        this.id = idCounter.incrementAndGet();
+        this.id = id;
     }
 
     // Getters and Setters

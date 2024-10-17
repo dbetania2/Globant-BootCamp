@@ -21,13 +21,9 @@ public abstract class Product  {
     private String name;
     private String description;
 
+
     // Many Products can be in Many ShoppingCarts
-    @ManyToMany
-    @JoinTable(
-            name = "shopping_cart_products",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "shopping_cart_id")
-    )
+    @ManyToMany(mappedBy = "products")
     private List<ShoppingCart> shoppingCarts = new ArrayList<>(); // Updated to match the relationship
 
     public Product(){
