@@ -34,9 +34,10 @@
             <li th:each="item : ${cartItems}">
                 <strong th:text="${item.name}">Product Name</strong> -
                 <span th:text="${item.price}">Product Price</span> USD
-                <form th:action="@{/cart/remove}" method="post">
+                <form class="remove-from-cart" th:action="@{/cart/remove}" method="post">
                     <input type="hidden" name="productId" th:value="${item.id}" />
                     <input type="hidden" name="cartId" th:value="${cartId}" />
+                    <input type="hidden" name="customerId" th:value="${customerId}" /> <!-- Agregar el customerId -->
                     <button type="submit">Remove</button>
                 </form>
             </li>
@@ -56,4 +57,3 @@
 
 </body>
 </html>
-
