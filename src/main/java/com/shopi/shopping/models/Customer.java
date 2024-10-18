@@ -1,4 +1,6 @@
 package com.shopi.shopping.models;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,6 +23,7 @@ import java.util.Objects;
 
 public class Customer  {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<ShoppingCart> shoppingCarts = new ArrayList<>();
 
     public List<ShoppingCart> getShoppingCarts() {
