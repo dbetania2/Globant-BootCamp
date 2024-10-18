@@ -1,12 +1,9 @@
-<!-- HTML -->
-<button id="add-to-cart" data-product-id="1">Add to Cart</button>
-
-<script>
 document.getElementById('add-to-cart').addEventListener('click', function() {
     const productId = this.getAttribute('data-product-id');
-    const cartId = 1; // Replace this with the ID of the cart you want to use
+    const cartId = 1; // Asegúrate de establecer esto dinámicamente si es necesario
+    const customerId = document.getElementById('customer-id').value; // Obtener el customerId desde el campo oculto
 
-    fetch(`/api/shopping-carts/${cartId}/products/${productId}`, {
+    fetch(`/api/shopping-carts/${cartId}/products/${productId}?customerId=${customerId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -19,21 +16,23 @@ document.getElementById('add-to-cart').addEventListener('click', function() {
         return response.json();
     })
     .then(data => {
-        console.log('Product added to cart:', data);
-        // Here you can update the UI to reflect the change
+        console.log('Producto añadido al carrito:', data);
     })
     .catch(error => {
-        console.error('Error adding product to cart:', error);
+        console.error('Error al agregar producto al carrito:', error);
     });
 });
-<script>
-// Checkout functionality: Redirect to checkout.html
 document.getElementById('checkout-button').addEventListener('click', function() {
-    const cartId = document.querySelector('input[name="cartId"]').value; // Get the cartId from the hidden input
+    const cartId = document.querySelector('input[name="cartId"]').value; // Obtener cartId
+    const customerId = document.querySelector('input[name="customerId"]').value; // Obtener customerId
 
-    // Redirect to checkout page with cartId in the URL
-    window.location.href = `/cart/checkout?cartId=${cartId}`;
+    // Verificar que ambos ID están disponibles
+    if (cartId && customerId) {
+        // Enviar el formulario
+        document.getElementById('checkout-form').submit();
+    } else {
+        alert("Cart ID or Customer ID is missing.");
+    }
 });
-</script>
 
 
