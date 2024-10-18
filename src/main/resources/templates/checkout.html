@@ -33,7 +33,7 @@
     <button type="submit">Submit Order</button>
 </form>
 
-<a href="/home">Back to Home</a>
+<a th:href="@{/home(cartId=${cartId}, customerId=${customerId})}">Back to Home</a>
 
 </body>
 </html>
