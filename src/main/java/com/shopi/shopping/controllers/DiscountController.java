@@ -27,10 +27,18 @@ public class DiscountController {
             @ApiResponse(responseCode = "400", description = "Invalid discount input.")
     })
     //------
+
     @PostMapping
     public ResponseEntity<Discount> createDiscount(@RequestBody Discount discount) {
-        Discount createdDiscount = discountService.createDiscount(discount);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
+        try {
+            // Crear el descuento utilizando el servicio
+            Discount createdDiscount = discountService.createDiscount(discount);
+            // Retornar el objeto creado en la respuesta
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscount);
+        } catch (IllegalArgumentException e) {
+            // Manejar errores de validación
+            return ResponseEntity.badRequest().body(null); // Puedes personalizar este mensaje si lo deseas
+        }
     }
 
     //------
