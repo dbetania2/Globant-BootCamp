@@ -1,7 +1,10 @@
 package com.shopi.shopping.controllers;
 
+import com.shopi.shopping.factories.OrderFactory;
 import com.shopi.shopping.models.Order;
+import com.shopi.shopping.models.products.Product;
 import com.shopi.shopping.repositories.OrderRepository;
+import com.shopi.shopping.services.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -10,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +23,8 @@ public class OrderController {
 
     @Autowired
     private OrderRepository orderRepository; // Automatically injects the OrderRepository
+    @Autowired
+    private OrderFactory orderFactory; // Automatically injects the OrderRepository
 
     //------
     @Operation(summary = "Create a new order", description = "Creates a new order and saves it.")
@@ -28,9 +34,9 @@ public class OrderController {
     })
     //------
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order savedOrder = orderRepository.save(order); // Save the order to the repository
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedOrder); // Return response with CREATED status
+    public ResponseEntity<Order> createOrder(@RequestBody List<Product> products) {
+        Order createdOrder = orderFactory.createOrder(products);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
     }
 
     //------
