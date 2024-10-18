@@ -31,7 +31,10 @@ public class NotificationController {
         }
 
         notificationService.notify(event);  // Sends the event to RabbitMQ
-        return ResponseEntity.ok("Notification sent successfully!");
+        String responseMessage = String.format("Notification sent successfully! Event Type: %s, Message: %s",
+                event.getEventType(), event.getMessage());
+
+        return ResponseEntity.ok(responseMessage);
     }
 
     @Operation(
