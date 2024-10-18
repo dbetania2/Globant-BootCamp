@@ -17,37 +17,38 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CheckoutController {
 
     @Autowired
-    private ShoppingCartServices shoppingCartServices; // Inyectar el servicio
+    private ShoppingCartServices shoppingCartServices; // Inject the service
     @Autowired
-    private ShoppingCartRepository shoppingCartRepository; // Inyectar el repositorio
+    private ShoppingCartRepository shoppingCartRepository; // Inject the repository
 
     @GetMapping("/cart/checkout")
     public String checkout(@RequestParam Long cartId, @RequestParam Long customerId, Model model) {
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-        // Agregar los productos del carrito al modelo
+        // Add the products in the cart to the model
         model.addAttribute("cartItems", cart.getProducts());
         model.addAttribute("cartId", cartId);
-        model.addAttribute("customerId", customerId); // Añadir customerId al modelo
+        model.addAttribute("customerId", customerId); // Add customerId to the model
 
-        return "checkout"; // Nombre del archivo checkout.html
+        return "checkout"; // Name of the checkout.html file
     }
 
     @PostMapping("/cart/{cartId}/buy")
     public String completeCheckout(@PathVariable Long cartId, @RequestParam Long customerId, RedirectAttributes redirectAttributes) {
-        // Recuperar el carrito
+        // Retrieve the cart
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-        // Procesar la compra
+        // Process the purchase
         shoppingCartServices.buyProducts(cart);
 
-        // Enviar mensaje de éxito
+        // Send success message
         redirectAttributes.addFlashAttribute("statusMessage", "Order successfully placed!");
 
-        // Redirigir a la página de checkout con el carrito actualizado
-        return "redirect:/cart/checkout?cartId=" + cartId + "&customerId=" + customerId; // Incluir customerId
+        // Redirect to the checkout page with the updated cart
+        return "redirect:/cart/checkout?cartId=" + cartId + "&customerId=" + customerId; // Include customerId
     }
+
 }
 
