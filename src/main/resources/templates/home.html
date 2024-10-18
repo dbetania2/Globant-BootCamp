@@ -17,6 +17,8 @@
         <form th:action="@{/cart/add}" method="post">
             <input type="hidden" name="productId" th:value="${product.id}" />
             <input type="hidden" name="cartId" th:value="${cartId}" />
+            <input type="hidden" name="customerId" th:value="${customerId}" /> <!-- Campo oculto para customerId -->
+
             <button type="submit">Add to Cart</button>
         </form>
     </li>
@@ -40,12 +42,14 @@
     <p>Your cart is empty.</p>
 </div>
 
-<!-- Checkout button -->
+v<!-- Checkout button -->
 <form th:action="@{/cart/buy}" method="post">
     <input type="hidden" name="cartId" th:value="${cartId}" />
+    <input type="hidden" name="customerId" th:value="${customerId}" /> <!-- Campo oculto para customerId -->
     <!-- Checkout button (with hidden input for cartId) -->
     <button id="checkout-button">Checkout</button>
 </form>
+
 
 </body>
 </html>

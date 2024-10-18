@@ -27,6 +27,7 @@
 
 <!-- Form to submit the order -->
 <form th:action="@{/cart/{cartId}/buy(cartId=${cartId})}" method="post">
+    <input type="hidden" name="customerId" th:value="${customerId}" /> <!-- Pass the customerId -->
     <button type="submit">Submit Order</button>
 </form>
 
