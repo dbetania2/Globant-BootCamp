@@ -350,6 +350,9 @@ public class ShoppingCartServices implements ShoppingCartInterface {
         logger.info("Fetching carts for customer ID: {}", customerId);
         return shoppingCartRepository.findByCustomerId(customerId);
     }
-
+    // Método para crear y guardar un nuevo ShoppingCart
+    public ShoppingCart createShoppingCart(ShoppingCart shoppingCart) {
+        return shoppingCartRepository.save(shoppingCart);
+    }
 
 }
