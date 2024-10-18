@@ -17,38 +17,37 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CheckoutController {
 
     @Autowired
-    private ShoppingCartServices shoppingCartServices; // Inject the service
+    private ShoppingCartServices shoppingCartServices; // Inyectar el servicio
     @Autowired
-    private ShoppingCartRepository shoppingCartRepository; // Inject the repository
+    private ShoppingCartRepository shoppingCartRepository; // Inyectar el repositorio
 
     @GetMapping("/cart/checkout")
-    public String checkout(@RequestParam Long cartId, Model model) {
+    public String checkout(@RequestParam Long cartId, @RequestParam Long customerId, Model model) {
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-        // Call the service to view the cart details
-        shoppingCartServices.viewCartDetails(cart);
-
-        // Add the cart products to the model
+        // Agregar los productos del carrito al modelo
         model.addAttribute("cartItems", cart.getProducts());
         model.addAttribute("cartId", cartId);
-        return "checkout"; // Name of the checkout.html file
+        model.addAttribute("customerId", customerId); // Añadir customerId al modelo
+
+        return "checkout"; // Nombre del archivo checkout.html
     }
 
     @PostMapping("/cart/{cartId}/buy")
-    public String completeCheckout(@PathVariable Long cartId, RedirectAttributes redirectAttributes) {
-        // Retrieve the cart
+    public String completeCheckout(@PathVariable Long cartId, @RequestParam Long customerId, RedirectAttributes redirectAttributes) {
+        // Recuperar el carrito
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
-        // Process the purchase
+        // Procesar la compra
         shoppingCartServices.buyProducts(cart);
 
-        // Send success message
+        // Enviar mensaje de éxito
         redirectAttributes.addFlashAttribute("statusMessage", "Order successfully placed!");
 
-        // Redirect to the checkout page with the updated cart
-        return "redirect:/cart/checkout?cartId=" + cartId; // Make sure this route is correct
+        // Redirigir a la página de checkout con el carrito actualizado
+        return "redirect:/cart/checkout?cartId=" + cartId + "&customerId=" + customerId; // Incluir customerId
     }
 }
 

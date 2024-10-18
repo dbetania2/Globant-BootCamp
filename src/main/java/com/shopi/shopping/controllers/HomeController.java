@@ -36,33 +36,43 @@ public class HomeController {
 
     @GetMapping("/home")
     public String showHomePage(Model model, @RequestParam(required = false) Long cartId, @RequestParam(required = false) Long customerId) {
+        // Validar customerId
         if (customerId == null) {
-            customerId = 1L; // ID predeterminado del cliente
-        }
-        if (cartId == null) {
-            cartId = 1L; // ID predeterminado del carrito
+            throw new IllegalArgumentException("Customer ID is required");
         }
 
+        // Buscar el Customer
         Customer customer = customerService.getCustomerById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
 
-        ShoppingCart cart = shoppingCartRepository.findById(cartId)
-                .orElseGet(() -> {
-                    ShoppingCart newCart = new ShoppingCart();
-                    newCart.setCustomer(customer);
-                    return shoppingCartRepository.save(newCart);
-                });
+        // Buscar el ShoppingCart
+        ShoppingCart cart;
+        if (cartId != null) {
+            cart = shoppingCartRepository.findById(cartId)
+                    .orElseGet(() -> {
+                        // Si no se encuentra el carrito, crear uno nuevo
+                        ShoppingCart newCart = new ShoppingCart();
+                        newCart.setCustomer(customer);
+                        return shoppingCartRepository.save(newCart);
+                    });
+        } else {
+            // Si no se proporciona cartId, crear uno nuevo automáticamente
+            cart = new ShoppingCart();
+            cart.setCustomer(customer);
+            cart = shoppingCartRepository.save(cart);
+        }
 
+        // Agregar atributos al modelo
         model.addAttribute("products", productService.getAllProducts()); // Carga todos los productos disponibles
         model.addAttribute("cartItems", cart.getProducts()); // Muestra los productos actuales en el carrito
         model.addAttribute("cartId", cart.getId());
+        model.addAttribute("customerId", customerId); // Agregar customerId al modelo
 
         return "home";
     }
 
-
     @PostMapping("/cart/buy")
-    public String checkout(@RequestParam Long cartId) {
+    public String checkout(@RequestParam Long cartId, @RequestParam Long customerId) {
         // Recuperar el carrito por ID
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
@@ -70,13 +80,12 @@ public class HomeController {
         // Lógica de compra
         shoppingCartServices.checkout(cart, true);
 
-        // Redirigir a la página de checkout, asegurándote de pasar el cartId
-        return "redirect:/cart/checkout?cartId=" + cartId; // Cambiado a redirigir al checkout con el cartId
+        // Redirigir a la página de checkout, asegurándote de pasar el cartId y customerId
+        return "redirect:/cart/checkout?cartId=" + cartId + "&customerId=" + customerId;
     }
 
-
     @PostMapping("/cart/add")
-    public String addToCart(@RequestParam Long productId, @RequestParam Long cartId, RedirectAttributes redirectAttributes) {
+    public String addToCart(@RequestParam Long productId, @RequestParam Long cartId, @RequestParam Long customerId, RedirectAttributes redirectAttributes) {
         ShoppingCart cart = shoppingCartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
@@ -95,7 +104,7 @@ public class HomeController {
             redirectAttributes.addFlashAttribute("error", "Product already in cart!");
         }
 
-        return "redirect:/home?cartId=" + cartId; // Asegúrate de que cartId tenga un valor válido
+        return "redirect:/home?cartId=" + cartId + "&customerId=" + customerId; // Asegúrate de que cartId y customerId tengan un valor válido
     }
 
 
