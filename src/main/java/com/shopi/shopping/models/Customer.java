@@ -1,9 +1,5 @@
 package com.shopi.shopping.models;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -22,6 +20,16 @@ import java.util.Objects;
 @Table(name = "customers")  // Maps the class to the "customers" table in the database
 
 public class Customer  {
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<ShoppingCart> shoppingCarts = new ArrayList<>();
+
+    public List<ShoppingCart> getShoppingCarts() {
+        return shoppingCarts;
+    }
+
+    public void setShoppingCarts(List<ShoppingCart> shoppingCarts) {
+        this.shoppingCarts = shoppingCarts;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,18 +41,18 @@ public class Customer  {
     @NotBlank(message = "Last name is required.")
     private String lastName;
 
-    @NotNull(message = "Birth date is required.")
+
     private LocalDate birthDate;
 
     @NotBlank(message = "Email is required.")
     @Email(message = "Email should be valid.")
     private String email;
 
-    @NotBlank(message = "Phone number is required.")
+
     @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be valid.")
     private String phone;
 
-    @NotBlank(message = "Identification number is required.")
+
     private String identificationNumber;
 
     // Default constructor required by JPA
