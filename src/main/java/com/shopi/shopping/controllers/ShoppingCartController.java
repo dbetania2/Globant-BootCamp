@@ -5,6 +5,7 @@ import com.shopi.shopping.services.ProductService;
 import com.shopi.shopping.services.ShoppingCartServices;
 import com.shopi.shopping.repositories.ShoppingCartRepository;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,4 +164,28 @@ public class ShoppingCartController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/remove")
+    @Operation(summary = "Remove a product from the shopping cart", description = "Removes a specified product from the shopping cart.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product removed from cart successfully."),
+            @ApiResponse(responseCode = "404", description = "Shopping cart or product not found."),
+            @ApiResponse(responseCode = "400", description = "Invalid cart or product ID.")
+    })
+    public String removeProductFromCart(
+            @Parameter(description = "ID of the cart", required = true) @RequestParam Long cartId,
+            @Parameter(description = "ID of the product to be removed", required = true) @RequestParam Long productId,
+            @Parameter(description = "Customer ID", required = true) @RequestParam Long customerId) {
+
+        // Retrieve the shopping cart by ID
+        ShoppingCart cart = shoppingCartRepository.findById(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+
+        // Retrieve the product by ID
+        Product product = productService.getProductById(productId);
+
+        // Remove the product from the cart using the service method
+        shoppingCartService.removeProductFromCart(cart, product);
+
+        return "Product removed from cart!";
+    }
 }
