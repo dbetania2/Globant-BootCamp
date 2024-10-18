@@ -2,13 +2,16 @@ package com.shopi.shopping.services;
 import com.shopi.shopping.exceptions.exceptionCustomer.CustomerNotFoundException;
 import com.shopi.shopping.models.Customer;
 import com.shopi.shopping.models.Event;
+import com.shopi.shopping.models.ShoppingCart;
 import com.shopi.shopping.repositories.CustomerRepository;
+import com.shopi.shopping.repositories.ShoppingCartRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +22,11 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final AmqpTemplate amqpTemplate;
 
+
     @Autowired
     private NotificationService notificationService; // Inyecta el NotificationService
+    @Autowired
+    private ShoppingCartRepository shoppingCartRepository;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository, AmqpTemplate amqpTemplate) {
@@ -104,6 +110,31 @@ public class CustomerService {
         Event birthdayEvent = new Event("BIRTHDAY","happy BIRTHDAY" );
         notificationService.notify(birthdayEvent); // Call the notify method of NotificationService
     }
+
+    public Customer createCustomerWithCart(String name, String lastName, String email) {
+        // Crear el nuevo Customer usando el Builder
+        Customer newCustomer = new Customer.CustomerBuilder(name, lastName)
+                .setEmail(email)
+                .build();
+
+        // Guardar el Customer en la base de datos
+        Customer savedCustomer = customerRepository.save(newCustomer);
+
+        // Crear y asociar un nuevo carrito al cliente
+        ShoppingCart newCart = new ShoppingCart();
+        newCart.setCustomer(savedCustomer); // Asignar el cliente al carrito
+        shoppingCartRepository.save(newCart); // Guarda el carrito
+
+        // Agregar el carrito a la lista de carritos del cliente
+        List<ShoppingCart> shoppingCarts = new ArrayList<>();
+        shoppingCarts.add(newCart);
+        savedCustomer.setShoppingCarts(shoppingCarts); // Asignar el carrito al cliente
+
+        return savedCustomer; // Devuelve el cliente guardado
+    }
+
+
+
 
 
 
