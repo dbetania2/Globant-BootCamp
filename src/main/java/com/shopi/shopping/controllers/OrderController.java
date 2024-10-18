@@ -86,7 +86,7 @@ public class OrderController {
         return ResponseEntity.ok(orders); // Return response with OK status and the list of orders
     }
 
-    //------
+    //-*-----
     @Operation(summary = "Retrieve orders with total amount greater than a specified value", description = "Fetches all orders where the total amount exceeds the provided value.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Orders retrieved successfully."),

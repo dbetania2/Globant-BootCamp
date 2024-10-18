@@ -80,7 +80,6 @@ public class HomeController {
         // Lógica de compra
         shoppingCartServices.checkout(cart, true);
 
-        // Redirigir a la página de checkout, asegurándote de pasar el cartId y customerId
         return "redirect:/cart/checkout?cartId=" + cartId + "&customerId=" + customerId;
     }
 
@@ -104,7 +103,7 @@ public class HomeController {
             redirectAttributes.addFlashAttribute("error", "Product already in cart!");
         }
 
-        return "redirect:/home?cartId=" + cartId + "&customerId=" + customerId; // Asegúrate de que cartId y customerId tengan un valor válido
+        return "redirect:/home?cartId=" + cartId + "&customerId=" + customerId;
     }
 
 
