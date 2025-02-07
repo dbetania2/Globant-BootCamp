@@ -1,0 +1,25 @@
+
+services:
+  shopping-cart:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"      # Mapea el puerto 8080 de tu máquina al contenedor
+      - "8081:8081"      # Mapea el puerto 8081 de tu máquina al contenedor
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq  # Nombre del servicio RabbitMQ
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+    depends_on:
+      - rabbitmq  # Asegura que RabbitMQ se inicie primero
+
+  rabbitmq:
+    image: rabbitmq:3-management  # Imagen oficial de RabbitMQ con gestión
+    ports:
+      - "5672:5672"  # Puerto para la comunicación de RabbitMQ
+      - "15672:15672"  # Puerto para la interfaz de gestión
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest

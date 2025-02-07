@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h1>Checkout</h1>
+
+<h2>Your Shopping Cart</h2>
+
+<!-- Status message -->
+<div class="status-message" th:if="${statusMessage}" th:text="${statusMessage}"></div>
+
+<!-- List of cart items -->
+<ul th:if="${cartItems}">
+    <li th:each="item : ${cartItems}">
+        <strong th:text="${item.name}">Product Name</strong>
+        <span th:text="${item.price} + ' USD'">Product Price</span>
+        <span th:text="'Description: ' + ${item.description}">Product Description</span>
+    </li>
+</ul>
+
+<!-- Show message if the cart is empty -->
+<div th:if="${cartItems == null || #lists.isEmpty(cartItems)}">
+    <p>Your cart is empty.</p>
+</div>
+
+<!-- Form to submit the order -->
+<form th:action="@{/cart/{cartId}/buy(cartId=${cartId})}" method="post">
+    <input type="hidden" name="customerId" th:value="${customerId}" />
+    <button type="submit">Submit Order</button>
+</form>
+
+<a th:href="@{/home(cartId=${cartId}, customerId=${customerId})}">Back to Home</a>
+
+</body>
+</html>
+
+
+

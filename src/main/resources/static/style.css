@@ -1,0 +1,89 @@
+/* General body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9; /* Color de fondo suave */
+    color: black; /* Color de texto negro */
+    margin: 0;
+    padding: 20px;
+}
+
+/* Centering the main container */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Alinea los elementos al principio */
+    flex-direction: row; /* Coloca el carrito y la galería uno al lado del otro */
+    margin: auto;
+    max-width: 1200px; /* Máximo ancho del contenedor */
+}
+
+/* Form styles */
+form {
+    background-color: #ffffff; /* Fondo blanco para los formularios */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px;
+    width: 300px; /* Ancho del formulario */
+}
+
+/* Input styles */
+input[type="text"],
+input[type="email"],
+button {
+    width: 100%; /* Full width for inputs and buttons */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+/* Button styles */
+button {
+    background-color: #ff99cc; /* Color pastel rosa */
+    color: black; /* Texto negro */
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ff66b2; /* Color más oscuro al pasar el mouse */
+}
+
+/* Shopping cart styles */
+.cart {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px;
+    width: 300px;
+}
+
+/* Checkout styles */
+.checkout {
+    text-align: center; /* Centra el contenido del checkout */
+}
+
+.status-message {
+    background-color: #ffccff; /* Fondo pastel rosa para el mensaje */
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 20px 0;
+    font-weight: bold;
+    font-size: 1.2em; /* Tamaño de fuente más grande */
+}
+
+/* Centering text in various headings */
+h1, h2 {
+    text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column; /* Apila los elementos en pantallas pequeñas */
+        align-items: center;
+    }
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shopping Cart</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h1>Welcome to the Shop</h1>
+
+<div class="container">
+    <!-- products -->
+    <div class="product-gallery">
+        <h2>Available Products</h2>
+        <ul>
+            <li th:each="product : ${products}">
+                <span th:text="${product.name}">Product Name</span> -
+                <span th:text="${product.price}">Product Price</span> USD
+                <form th:action="@{/cart/add}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.id}" />
+                    <input type="hidden" name="cartId" th:value="${cartId}" />
+                    <input type="hidden" name="customerId" th:value="${customerId}" />
+                    <button type="submit">Add to Cart</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Carrito de compras -->
+    <div class="shopping-cart">
+        <h2>Your Cart</h2>
+        <ul th:if="${cartItems != null && !#lists.isEmpty(cartItems)}">
+            <li th:each="item : ${cartItems}">
+                <strong th:text="${item.name}">Product Name</strong> -
+                <span th:text="${item.price}">Product Price</span> USD
+                <form class="remove-from-cart" th:action="@{/cart/remove}" method="post">
+                    <input type="hidden" name="productId" th:value="${item.id}" />
+                    <input type="hidden" name="cartId" th:value="${cartId}" />
+                    <input type="hidden" name="customerId" th:value="${customerId}" /> <!-- Agregar el customerId -->
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        </ul>
+
+        <div th:if="${cartItems == null || #lists.isEmpty(cartItems)}">
+            <p>Your cart is empty.</p>
+        </div>
+
+        <form th:action="@{/cart/buy}" method="post">
+            <input type="hidden" name="cartId" th:value="${cartId}" />
+            <input type="hidden" name="customerId" th:value="${customerId}" />
+            <button id="checkout-button">Checkout</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

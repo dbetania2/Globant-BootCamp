@@ -4,7 +4,9 @@ out/
 !**/src/test/**/out/
 *.iml
 .idea/
-
+logs/
+*.log
+src/main/resources/application.properties
 
 ### Eclipse ###
 .apt_generated
@@ -30,5 +32,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-
+target/
 
