@@ -8,5 +8,4 @@ This project simulates a shopping cart application using Java and Spring Boot, d
 
 
 ![Captura de pantalla 2024-10-15 141917](https://github.com/user-attachments/assets/02b2f0f7-a0a4-4e11-9975-40bbb88843ec)
-![Captura de pantalla 2024-09-26 192307](https://github.com/user-attachments/assets/d2112758-da5f-40ea-bce0-0363364f6a8e)
 ![image](https://github.com/user-attachments/assets/1dbf82c1-e65b-4070-b647-9ecbb9a2d260)
